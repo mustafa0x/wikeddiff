@@ -597,7 +597,7 @@ var WikEdDiff = function () {
      * @option element Node DOM node
      * @option type string Event type
      */
-    this.config.blockHandler = function ( event, element, type ) {
+    this.config.blockHandler = (event, element, type) => {
 
         // IE compatibility
         if ( event === undefined && window.event !== undefined ) {
@@ -615,10 +615,10 @@ var WikEdDiff = function () {
         // Highlight corresponding mark/block pairs
         if ( type === 'mouseover' ) {
             element.onmouseover = null;
-            element.onmouseout = function ( event ) {
+            element.onmouseout = event => {
                 window.wikEdDiffBlockHandler( event, element, 'mouseout' );
             };
-            element.onclick = function ( event ) {
+            element.onclick = event => {
                 window.wikEdDiffBlockHandler( event, element, 'click' );
             };
             block.className += ' wikEdDiffBlockHighlight';
@@ -628,7 +628,7 @@ var WikEdDiff = function () {
         // Remove mark/block highlighting
         if ( type === 'mouseout' || type === 'click' ) {
             element.onmouseout = null;
-            element.onmouseover = function ( event ) {
+            element.onmouseover = event => {
                 window.wikEdDiffBlockHandler( event, element, 'mouseover' );
             };
 
@@ -2097,9 +2097,7 @@ var WikEdDiff = function () {
         }
 
         // Sort blocks by new text token number
-        blocks.sort( function( a, b ) {
-            return a.newNumber - b.newNumber;
-        } );
+        blocks.sort( (a, b) => a.newNumber - b.newNumber );
 
         // Number blocks in new text order
         var blocksLength = blocks.length;
@@ -2564,9 +2562,7 @@ var WikEdDiff = function () {
 
         // Sort shallow copy of blocks by oldNumber
         var blocksOld = blocks.slice();
-        blocksOld.sort( function( a, b ) {
-            return a.oldNumber - b.oldNumber;
-        } );
+        blocksOld.sort( (a, b) => a.oldNumber - b.oldNumber );
 
         // Cycle through blocks in old text order
         var blocksOldLength = blocksOld.length;
@@ -2735,7 +2731,7 @@ var WikEdDiff = function () {
         var groups = this.groups;
 
         // Sort by newNumber, then by old number
-        blocks.sort( function( a, b ) {
+        blocks.sort( (a, b) => {
             var comp = a.newNumber - b.newNumber;
             if ( comp === 0 ) {
                 comp = a.oldNumber - b.oldNumber;
@@ -2860,7 +2856,7 @@ var WikEdDiff = function () {
         }
 
         // Sort copy by oldNumber
-        blocksOld.sort( function( a, b ) {
+        blocksOld.sort( (a, b) => {
             var comp = a.oldNumber - b.oldNumber;
             if ( comp === 0 ) {
                 comp = a.newNumber - b.newNumber;
@@ -3004,9 +3000,7 @@ var WikEdDiff = function () {
 
         // Make shallow copy of groups and sort by blockStart
         var groupsSort = groups.slice();
-        groupsSort.sort( function( a, b ) {
-            return a.blockStart - b.blockStart;
-        } );
+        groupsSort.sort( (a, b) => a.blockStart - b.blockStart );
 
         // Cycle through groups
         var groupsSortLength = groupsSort.length;
@@ -3804,7 +3798,7 @@ var WikEdDiff = function () {
      * @param string html Html code to be escaped
      * @return string Escaped html code
      */
-    this.htmlEscape = function ( html ) {
+    this.htmlEscape = html => {
 
         html = html.replace( /&/g, '&amp;');
         html = html.replace( /</g, '&lt;');
@@ -3967,7 +3961,7 @@ var WikEdDiff = function () {
      * @param string name Arrays name
      * @param[in] array border Match border array
      */
-    this.debugBorders = function ( name, borders ) {
+    this.debugBorders = (name, borders) => {
 
         var dump = '\ni \t[ new \told ]\n';
         var bordersLength = borders.length;
@@ -3986,7 +3980,7 @@ var WikEdDiff = function () {
      * @param int end Length of trailing fragment of shortened text
      * @return string Shortened text
      */
-    this.debugShortenText = function ( text, max, end ) {
+    this.debugShortenText = (text, max, end) => {
 
         if ( typeof text !== 'string' ) {
             text = text.toString();
@@ -4078,7 +4072,7 @@ var WikEdDiff = function () {
      * @param string name Object identifier
      * @param mixed|undefined name Object to be logged
      */
-    this.debug = function ( name, object ) {
+    this.debug = (name, object) => {
 
         if ( object === undefined ) {
             console.log( name );
@@ -4094,7 +4088,7 @@ var WikEdDiff = function () {
  *
  * @param string code JavaScript code
  */
-    this.addScript = function ( code ) {
+    this.addScript = code => {
 
         if ( document.getElementById( 'wikEdDiffBlockHandler' ) === null ) {
             var script = document.createElement( 'script' );
