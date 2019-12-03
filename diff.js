@@ -138,11 +138,9 @@ var wikEdDiffConfig;
  *
  * @class WikEdDiff
  */
-var WikEdDiff = function () {
-
+const WikEdDiff = function () {
     /** @var array config Configuration and customization settings. */
     this.config = {
-
         /** Core diff settings (with default values). */
 
         /**
@@ -337,38 +335,21 @@ var WikEdDiff = function () {
     /** Add regular expressions to configuration settings. */
 
     this.config.regExp = {
-
         // RegExps for splitting text
         split: {
-
             // Split into paragraphs, after double newlines
             paragraph: new RegExp(
-                '(\\r\\n|\\n|\\r){2,}|[' +
-                this.config.regExpNewParagraph +
-                ']',
-                'g'
+                `(\\r\\n|\\n|\\r){2,}|[${this.config.regExpNewParagraph}]`, 'g'
             ),
 
             // Split into lines
             line: new RegExp(
-                '\\r\\n|\\n|\\r|[' +
-                this.config.regExpNewLinesAll +
-                ']',
-                'g'
+                `\\r\\n|\\n|\\r|[${this.config.regExpNewLinesAll}]`, 'g'
             ),
 
             // Split into sentences /[^ ].*?[.!?:;]+(?= |$)/
             sentence: new RegExp(
-                '[^' +
-                this.config.regExpBlanks +
-                '].*?[.!?:;' +
-                this.config.regExpFullStops +
-                this.config.regExpExclamationMarks +
-                this.config.regExpQuestionMarks +
-                ']+(?=[' +
-                this.config.regExpBlanks +
-                ']|$)',
-                'g'
+                `[^${this.config.regExpBlanks}].*?[.!?:;${this.config.regExpFullStops}${this.config.regExpExclamationMarks}${this.config.regExpQuestionMarks}]+(?=[${this.config.regExpBlanks}]|$)`, 'g'
             ),
 
             // Split into inline chunks
@@ -386,12 +367,7 @@ var WikEdDiff = function () {
             // Split into words, multi-char markup, and chars
             // regExpLetters speed-up: \\w+
             word: new RegExp(
-                '(\\w+|[_' +
-                this.config.regExpLetters +
-                '])+([\'’][_' +
-                this.config.regExpLetters +
-                ']*)*|\\[\\[|\\]\\]|\\{\\{|\\}\\}|&\\w+;|\'\'\'|\'\'|==+|\\{\\||\\|\\}|\\|-|.',
-                'g'
+                `(\\w+|[_${this.config.regExpLetters}])+(['’][_${this.config.regExpLetters}]*)*|\\[\\[|\\]\\]|\\{\\{|\\}\\}|&\\w+;|'''|''|==+|\\{\\||\\|\\}|\\|-|.`, 'g'
             ),
 
             // Split into chars
@@ -400,34 +376,20 @@ var WikEdDiff = function () {
 
         // RegExp to detect blank tokens
         blankOnlyToken: new RegExp(
-            '[^' +
-            this.config.regExpBlanks +
-            this.config.regExpNewLinesAll +
-            this.config.regExpNewParagraph +
-            ']'
+            `[^${this.config.regExpBlanks}${this.config.regExpNewLinesAll}${this.config.regExpNewParagraph}]`
         ),
 
         // RegExps for sliding gaps: newlines and space/word breaks
         slideStop: new RegExp(
-            '[' +
-            this.config.regExpNewLinesAll +
-            this.config.regExpNewParagraph +
-            ']$'
+            `[${this.config.regExpNewLinesAll}${this.config.regExpNewParagraph}]$`
         ),
         slideBorder: new RegExp(
-            '[' +
-            this.config.regExpBlanks +
-            ']$'
+            `[${this.config.regExpBlanks}]$`
         ),
 
         // RegExps for counting words
         countWords: new RegExp(
-            '(\\w+|[_' +
-            this.config.regExpLetters +
-            '])+([\'’][_' +
-            this.config.regExpLetters +
-            ']*)*',
-            'g'
+            `(\\w+|[_${this.config.regExpLetters}])+(['’][_${this.config.regExpLetters}]*)*`, 'g'
         ),
         countChunks: new RegExp(
             '\\[\\[[^\\[\\]\\n]+\\]\\]|' +       // [[wiki link]]
@@ -445,53 +407,27 @@ var WikEdDiff = function () {
 
         // RegExps for clipping
         clipLine: new RegExp(
-            '[' + this.config.regExpNewLinesAll +
-            this.config.regExpNewParagraph +
-            ']+',
-            'g'
+            `[${this.config.regExpNewLinesAll}${this.config.regExpNewParagraph}]+`, 'g'
         ),
         clipHeading: new RegExp(
             '( ^|\\n)(==+.+?==+|\\{\\||\\|\\}).*?(?=\\n|$)', 'g' ),
         clipParagraph: new RegExp(
-            '( (\\r\\n|\\n|\\r){2,}|[' +
-            this.config.regExpNewParagraph +
-            '])+',
-            'g'
+            `( (\\r\\n|\\n|\\r){2,}|[${this.config.regExpNewParagraph}])+`, 'g'
         ),
         clipBlank: new RegExp(
-            '[' +
-            this.config.regExpBlanks + ']+',
-            'g'
+            `[${this.config.regExpBlanks}]+`, 'g'
         ),
         clipTrimNewLinesLeft: new RegExp(
-            '[' +
-            this.config.regExpNewLinesAll +
-            this.config.regExpNewParagraph +
-            ']+$',
-            'g'
+            `[${this.config.regExpNewLinesAll}${this.config.regExpNewParagraph}]+$`, 'g'
         ),
         clipTrimNewLinesRight: new RegExp(
-            '^[' +
-            this.config.regExpNewLinesAll +
-            this.config.regExpNewParagraph +
-            ']+',
-            'g'
+            `^[${this.config.regExpNewLinesAll}${this.config.regExpNewParagraph}]+`, 'g'
         ),
         clipTrimBlanksLeft: new RegExp(
-            '[' +
-            this.config.regExpBlanks +
-            this.config.regExpNewLinesAll +
-            this.config.regExpNewParagraph +
-            ']+$',
-            'g'
+            `[${this.config.regExpBlanks}${this.config.regExpNewLinesAll}${this.config.regExpNewParagraph}]+$`, 'g'
         ),
         clipTrimBlanksRight: new RegExp(
-            '^[' +
-            this.config.regExpBlanks +
-            this.config.regExpNewLinesAll +
-            this.config.regExpNewParagraph +
-            ']+',
-            'g'
+            `^[${this.config.regExpBlanks}${this.config.regExpNewLinesAll}${this.config.regExpNewParagraph}]+`, 'g'
         )
     };
 
@@ -518,9 +454,7 @@ var WikEdDiff = function () {
      */
     this.config.htmlCode = {
         noChangeStart:
-            '<div class="wikEdDiffNoChange" title="' +
-            this.config.msg['wiked-diff-same'] +
-            '">',
+            `<div class="wikEdDiffNoChange" title="${this.config.msg['wiked-diff-same']}">`,
         noChangeEnd: '</div>',
 
         containerStart: '<div class="wikEdDiffContainer" id="wikEdDiffContainer">',
@@ -531,23 +465,15 @@ var WikEdDiff = function () {
         separator: '<div class="wikEdDiffSeparator"></div>',
 
         insertStart:
-            '<span class="wikEdDiffInsert" title="' +
-            this.config.msg['wiked-diff-ins'] +
-            '">',
+            `<span class="wikEdDiffInsert" title="${this.config.msg['wiked-diff-ins']}">`,
         insertStartBlank:
-            '<span class="wikEdDiffInsert wikEdDiffInsertBlank" title="' +
-            this.config.msg['wiked-diff-ins'] +
-            '">',
+            `<span class="wikEdDiffInsert wikEdDiffInsertBlank" title="${this.config.msg['wiked-diff-ins']}">`,
         insertEnd: '</span>',
 
         deleteStart:
-            '<span class="wikEdDiffDelete" title="' +
-            this.config.msg['wiked-diff-del'] +
-            '">',
+            `<span class="wikEdDiffDelete" title="${this.config.msg['wiked-diff-del']}">`,
         deleteStartBlank:
-            '<span class="wikEdDiffDelete wikEdDiffDeleteBlank" title="' +
-            this.config.msg['wiked-diff-del'] +
-            '">',
+            `<span class="wikEdDiffDelete wikEdDiffDeleteBlank" title="${this.config.msg['wiked-diff-del']}">`,
         deleteEnd: '</span>',
 
         blockStart:
@@ -598,16 +524,15 @@ var WikEdDiff = function () {
      * @option type string Event type
      */
     this.config.blockHandler = (event, element, type) => {
-
         // IE compatibility
         if ( event === undefined && window.event !== undefined ) {
             event = window.event;
         }
 
         // Get mark/block elements
-        var number = element.id.replace( /\D/g, '' );
-        var block = document.getElementById( 'wikEdDiffBlock' + number );
-        var mark = document.getElementById( 'wikEdDiffMark' + number );
+        const number = element.id.replace( /\D/g, '' );
+        const block = document.getElementById( `wikEdDiffBlock${number}` );
+        const mark = document.getElementById( `wikEdDiffMark${number}` );
         if ( block === null || mark === null ) {
             return;
         }
@@ -638,16 +563,16 @@ var WikEdDiff = function () {
                 mark.className = mark.className.replace( / wikEdDiffMarkHighlight/g, '' );
 
                 // GetElementsByClassName
-                var container = document.getElementById( 'wikEdDiffContainer' );
+                const container = document.getElementById( 'wikEdDiffContainer' );
                 if ( container !== null ) {
-                    var spans = container.getElementsByTagName( 'span' );
-                    var spansLength = spans.length;
-                    for ( var i = 0; i < spansLength; i ++ ) {
+                    const spans = container.getElementsByTagName( 'span' );
+                    const spansLength = spans.length;
+                    for ( let i = 0; i < spansLength; i++ ) {
                         if ( spans[i] !== block && spans[i] !== mark ) {
-                            if ( spans[i].className.indexOf( ' wikEdDiffBlockHighlight' ) !== -1 ) {
+                            if ( spans[i].className.includes(' wikEdDiffBlockHighlight') ) {
                                 spans[i].className = spans[i].className.replace( / wikEdDiffBlockHighlight/g, '' );
                             }
-                            else if ( spans[i].className.indexOf( ' wikEdDiffMarkHighlight') !== -1 ) {
+                            else if ( spans[i].className.includes(' wikEdDiffMarkHighlight') ) {
                                 spans[i].className = spans[i].className.replace( / wikEdDiffMarkHighlight/g, '' );
                             }
                         }
@@ -658,9 +583,8 @@ var WikEdDiff = function () {
 
         // Scroll to corresponding mark/block element
         if ( type === 'click' ) {
-
             // Get corresponding element
-            var corrElement;
+            let corrElement;
             if ( element === block ) {
                 corrElement = mark;
             }
@@ -669,14 +593,14 @@ var WikEdDiff = function () {
             }
 
             // Get element height (getOffsetTop)
-            var corrElementPos = 0;
-            var node = corrElement;
+            let corrElementPos = 0;
+            let node = corrElement;
             do {
                 corrElementPos += node.offsetTop;
             } while ( ( node = node.offsetParent ) !== null );
 
             // Get scroll height
-            var top;
+            let top;
             if ( window.pageYOffset !== undefined ) {
                 top = window.pageYOffset;
             }
@@ -685,7 +609,7 @@ var WikEdDiff = function () {
             }
 
             // Get cursor pos
-            var cursor;
+            let cursor;
             if ( event.pageY !== undefined ) {
                 cursor = event.pageY;
             }
@@ -694,7 +618,7 @@ var WikEdDiff = function () {
             }
 
             // Get line height
-            var line = 12;
+            let line = 12;
             if ( window.getComputedStyle !== undefined ) {
                 line = parseInt( window.getComputedStyle( corrElement ).getPropertyValue( 'line-height' ) );
             }
@@ -763,7 +687,6 @@ var WikEdDiff = function () {
      */
 
     this.init = function () {
-
         // Import customizations from wikEdDiffConfig{}
         if ( typeof wikEdDiffConfig === 'object' ) {
             this.deepCopy( wikEdDiffConfig, this.config );
@@ -787,7 +710,6 @@ var WikEdDiff = function () {
      * @return string Html code of diff
      */
     this.diff = function ( oldString, newString ) {
-
         // Start total timer
         if ( this.config.timer === true ) {
             this.time( 'total' );
@@ -937,7 +859,6 @@ var WikEdDiff = function () {
 
         // Split tokens into chars
         if ( this.config.charDiff === true ) {
-
             // Split tokens into chars in selected unresolved gaps
             if ( this.config.timer === true ) {
                 this.time( 'character split' );
@@ -1000,7 +921,6 @@ var WikEdDiff = function () {
 
         // Unit tests
         if ( this.config.unitTesting === true ) {
-
             // Test diff to test consistency between input and output
             if ( this.config.timer === true ) {
                 this.time( 'unit tests' );
@@ -1013,7 +933,6 @@ var WikEdDiff = function () {
 
         // Clipping
         if ( this.config.fullDiff === false ) {
-
             // Clipping unchanged sections from unmoved block text
             if ( this.config.timer === true ) {
                 this.time( 'clip' );
@@ -1071,19 +990,17 @@ var WikEdDiff = function () {
      * @param[in/out] WikEdDiffText newText, oldText Text object tokens list
      */
     this.splitRefineChars = function () {
-
         /** Find corresponding gaps. */
 
         // Cycle through new text tokens list
-        var gaps = [];
+        const gaps = [];
         var gap = null;
         var i = this.newText.first;
         var j = this.oldText.first;
         while ( i !== null ) {
-
             // Get token links
-            var newLink = this.newText.tokens[i].link;
-            var oldLink = null;
+            const newLink = this.newText.tokens[i].link;
+            let oldLink = null;
             if ( j !== null ) {
                 oldLink = this.oldText.tokens[j].link;
             }
@@ -1105,7 +1022,7 @@ var WikEdDiff = function () {
             // Count chars and tokens in gap
             else if ( gap !== null && newLink === null ) {
                 gaps[gap].newLast = i;
-                gaps[gap].newTokens ++;
+                gaps[gap].newTokens++;
             }
 
             // Gap ended
@@ -1122,8 +1039,7 @@ var WikEdDiff = function () {
 
         // Cycle through gaps and add old text gap data
         var gapsLength = gaps.length;
-        for ( var gap = 0; gap < gapsLength; gap ++ ) {
-
+        for ( var gap = 0; gap < gapsLength; gap++ ) {
             // Cycle through old text tokens list
             var j = gaps[gap].oldFirst;
             while (
@@ -1131,10 +1047,9 @@ var WikEdDiff = function () {
                 this.oldText.tokens[j] !== null &&
                 this.oldText.tokens[j].link === null
             ) {
-
                 // Count old chars and tokens in gap
                 gaps[gap].oldLast = j;
-                gaps[gap].oldTokens ++;
+                gaps[gap].oldTokens++;
 
                 j = this.oldText.tokens[j].next;
             }
@@ -1143,12 +1058,11 @@ var WikEdDiff = function () {
         /** Select gaps of identical token number and strong similarity of all tokens. */
 
         var gapsLength = gaps.length;
-        for ( var gap = 0; gap < gapsLength; gap ++ ) {
-            var charSplit = true;
+        for ( var gap = 0; gap < gapsLength; gap++ ) {
+            let charSplit = true;
 
             // Not same gap length
             if ( gaps[gap].newTokens !== gaps[gap].oldTokens ) {
-
                 // One word became separated by space, dash, or any string
                 if ( gaps[gap].newTokens === 1 && gaps[gap].oldTokens === 3 ) {
                     var token = this.newText.tokens[ gaps[gap].newFirst ].token;
@@ -1183,12 +1097,12 @@ var WikEdDiff = function () {
                 var i = gaps[gap].newFirst;
                 var j = gaps[gap].oldFirst;
                 while ( i !== null ) {
-                    var newToken = this.newText.tokens[i].token;
-                    var oldToken = this.oldText.tokens[j].token;
+                    const newToken = this.newText.tokens[i].token;
+                    const oldToken = this.oldText.tokens[j].token;
 
                     // Get shorter and longer token
-                    var shorterToken;
-                    var longerToken;
+                    let shorterToken;
+                    let longerToken;
                     if ( newToken.length < oldToken.length ) {
                         shorterToken = newToken;
                         longerToken = oldToken;
@@ -1200,20 +1114,19 @@ var WikEdDiff = function () {
 
                     // Not same token length
                     if ( newToken.length !== oldToken.length ) {
-
                         // Test for addition or deletion of internal string in tokens
 
                         // Find number of identical chars from left
-                        var left = 0;
+                        let left = 0;
                         while ( left < shorterToken.length ) {
                             if ( newToken.charAt( left ) !== oldToken.charAt( left ) ) {
                                 break;
                             }
-                            left ++;
+                            left++;
                         }
 
                         // Find number of identical chars from right
-                        var right = 0;
+                        let right = 0;
                         while ( right < shorterToken.length ) {
                             if (
                                 newToken.charAt( newToken.length - 1 - right ) !==
@@ -1221,19 +1134,16 @@ var WikEdDiff = function () {
                             ) {
                                 break;
                             }
-                            right ++;
+                            right++;
                         }
 
                         // No simple insertion or deletion of internal string
                         if ( left + right !== shorterToken.length ) {
-
                             // Not addition or deletion of flanking strings in tokens
                             // Smaller token not part of larger token
-                            if ( longerToken.indexOf( shorterToken ) === -1 ) {
-
+                            if ( !longerToken.includes(shorterToken) ) {
                                 // Same text at start or end shorter than different text
                                 if ( left < shorterToken.length / 2 && (right < shorterToken.length / 2) ) {
-
                                     // Do not split into chars in this gap
                                     charSplit = false;
                                     break;
@@ -1244,17 +1154,15 @@ var WikEdDiff = function () {
 
                     // Same token length
                     else if ( newToken !== oldToken ) {
-
                         // Tokens less than 50 % identical
-                        var ident = 0;
-                        var tokenLength = shorterToken.length;
-                        for ( var pos = 0; pos < tokenLength; pos ++ ) {
+                        let ident = 0;
+                        const tokenLength = shorterToken.length;
+                        for ( let pos = 0; pos < tokenLength; pos++ ) {
                             if ( shorterToken.charAt( pos ) === longerToken.charAt( pos ) ) {
-                                ident ++;
+                                ident++;
                             }
                         }
                         if ( ident / shorterToken.length < 0.49 ) {
-
                             // Do not split into chars this gap
                             charSplit = false;
                             break;
@@ -1275,16 +1183,14 @@ var WikEdDiff = function () {
         /** Refine words into chars in selected gaps. */
 
         var gapsLength = gaps.length;
-        for ( var gap = 0; gap < gapsLength; gap ++ ) {
+        for ( var gap = 0; gap < gapsLength; gap++ ) {
             if ( gaps[gap].charSplit === true ) {
-
                 // Cycle through new text tokens list, link spaces, and split into chars
                 var i = gaps[gap].newFirst;
                 var j = gaps[gap].oldFirst;
-                var newGapLength = i - gaps[gap].newLast;
-                var oldGapLength = j - gaps[gap].oldLast;
+                const newGapLength = i - gaps[gap].newLast;
+                const oldGapLength = j - gaps[gap].oldLast;
                 while ( i !== null || j !== null ) {
-
                     // Link identical tokens (spaces) to keep char refinement to words
                     if (
                         newGapLength === oldGapLength &&
@@ -1329,15 +1235,13 @@ var WikEdDiff = function () {
      * @param[in/out] wikEdDiffText text, textLinked These two are newText and oldText
      */
     this.slideGaps = function ( text, textLinked ) {
-
-        var regExpSlideBorder = this.config.regExp.slideBorder;
-        var regExpSlideStop = this.config.regExp.slideStop;
+        const regExpSlideBorder = this.config.regExp.slideBorder;
+        const regExpSlideStop = this.config.regExp.slideStop;
 
         // Cycle through tokens list
-        var i = text.first;
-        var gapStart = null;
+        let i = text.first;
+        let gapStart = null;
         while ( i !== null ) {
-
             // Remember gap start
             if ( gapStart === null && text.tokens[i].link === null ) {
                 gapStart = i;
@@ -1345,8 +1249,8 @@ var WikEdDiff = function () {
 
             // Find gap end
             else if ( gapStart !== null && text.tokens[i].link !== null ) {
-                var gapFront = gapStart;
-                var gapBack = text.tokens[i].prev;
+                let gapFront = gapStart;
+                let gapBack = text.tokens[i].prev;
 
                 // Slide down as deep as possible
                 var front = gapFront;
@@ -1372,8 +1276,8 @@ var WikEdDiff = function () {
                 // Test slide up, remember last line break or word border
                 var front = text.tokens[gapFront].prev;
                 var back = gapBack;
-                var gapFrontBlankTest = regExpSlideBorder.test( text.tokens[gapFront].token );
-                var frontStop = front;
+                const gapFrontBlankTest = regExpSlideBorder.test( text.tokens[gapFront].token );
+                let frontStop = front;
                 if ( text.tokens[back].link === null ) {
                     while (
                         front !== null &&
@@ -1382,7 +1286,6 @@ var WikEdDiff = function () {
                         text.tokens[front].token === text.tokens[back].token
                     ) {
                         if ( front !== null ) {
-
                             // Stop at line break
                             if ( regExpSlideStop.test( text.tokens[front].token ) === true ) {
                                 frontStop = front;
@@ -1457,7 +1360,6 @@ var WikEdDiff = function () {
         up,
         recursionLevel
     ) {
-
         // Set defaults
         if ( repeating === undefined ) { repeating = false; }
         if ( recurse === undefined ) { recurse = false; }
@@ -1475,9 +1377,9 @@ var WikEdDiff = function () {
         }
 
         // Get object symbols table and linked region borders
-        var symbols;
-        var bordersDown;
-        var bordersUp;
+        let symbols;
+        let bordersDown;
+        let bordersUp;
         if ( recursionLevel === 0 && repeating === false ) {
             symbols = this.symbols;
             bordersDown = this.bordersDown;
@@ -1497,8 +1399,8 @@ var WikEdDiff = function () {
 
 
         // Updated versions of linked region borders
-        var bordersUpNext = [];
-        var bordersDownNext = [];
+        const bordersUpNext = [];
+        const bordersDownNext = [];
 
         /**
          * Pass 1: parse new text into symbol table.
@@ -1508,7 +1410,6 @@ var WikEdDiff = function () {
         var i = newStart;
         while ( i !== null ) {
             if ( this.newText.tokens[i].link === null ) {
-
                 // Add new entry to symbol table
                 var token = this.newText.tokens[i].token;
                 if ( Object.prototype.hasOwnProperty.call( symbols.hashTable, token ) === false ) {
@@ -1523,10 +1424,9 @@ var WikEdDiff = function () {
 
                 // Or update existing entry
                 else {
-
                     // Increment token counter for new text
                     var hashToArray = symbols.hashTable[token];
-                    symbols.token[hashToArray].newCount ++;
+                    symbols.token[hashToArray].newCount++;
                 }
             }
 
@@ -1552,7 +1452,6 @@ var WikEdDiff = function () {
         var j = oldStart;
         while ( j !== null ) {
             if ( this.oldText.tokens[j].link === null ) {
-
                 // Add new entry to symbol table
                 var token = this.oldText.tokens[j].token;
                 if ( Object.prototype.hasOwnProperty.call( symbols.hashTable, token ) === false ) {
@@ -1567,10 +1466,9 @@ var WikEdDiff = function () {
 
                 // Or update existing entry
                 else {
-
                     // Increment token counter for old text
                     var hashToArray = symbols.hashTable[token];
-                    symbols.token[hashToArray].oldCount ++;
+                    symbols.token[hashToArray].oldCount++;
 
                     // Add token number for old text
                     symbols.token[hashToArray].oldToken = j;
@@ -1596,24 +1494,21 @@ var WikEdDiff = function () {
          */
 
         // Cycle through symbol array
-        var symbolsLength = symbols.token.length;
-        for ( var i = 0; i < symbolsLength; i ++ ) {
-
+        const symbolsLength = symbols.token.length;
+        for ( var i = 0; i < symbolsLength; i++ ) {
             // Find tokens in the symbol table that occur only once in both versions
             if ( symbols.token[i].newCount === 1 && symbols.token[i].oldCount === 1 ) {
-                var newToken = symbols.token[i].newToken;
-                var oldToken = symbols.token[i].oldToken;
-                var newTokenObj = this.newText.tokens[newToken];
-                var oldTokenObj = this.oldText.tokens[oldToken];
+                const newToken = symbols.token[i].newToken;
+                const oldToken = symbols.token[i].oldToken;
+                const newTokenObj = this.newText.tokens[newToken];
+                const oldTokenObj = this.oldText.tokens[oldToken];
 
                 // Connect from new to old and from old to new
                 if ( newTokenObj.link === null ) {
-
                     // Do not use spaces as unique markers
                     if (
                         this.config.regExp.blankOnlyToken.test( newTokenObj.token ) === true
                     ) {
-
                         // Link new and old tokens
                         newTokenObj.link = oldToken;
                         oldTokenObj.link = newToken;
@@ -1625,27 +1520,27 @@ var WikEdDiff = function () {
 
                         // Check if token contains unique word
                         if ( recursionLevel === 0 ) {
-                            var unique = false;
+                            let unique = false;
                             if ( level === 'character' ) {
                                 unique = true;
                             }
                             else {
                                 var token = newTokenObj.token;
-                                var words =
+                                const words =
                                     ( token.match( this.config.regExp.countWords ) || [] ).concat(
                                         ( token.match( this.config.regExp.countChunks ) || [] )
                                     );
 
                                 // Unique if longer than min block length
-                                var wordsLength = words.length;
+                                const wordsLength = words.length;
                                 if ( wordsLength >= this.config.blockMinLength ) {
                                     unique = true;
                                 }
 
                                 // Unique if it contains at least one unique word
                                 else {
-                                    for ( var i = 0;i < wordsLength; i ++ ) {
-                                        var word = words[i];
+                                    for ( var i = 0;i < wordsLength; i++ ) {
+                                        const word = words[i];
                                         if (
                                             this.oldText.words[word] === 1 &&
                                             this.newText.words[word] === 1 &&
@@ -1672,14 +1567,13 @@ var WikEdDiff = function () {
 
         // Continue passes only if unique tokens have been linked previously
         if ( symbols.linked === true ) {
-
             /**
              * Pass 4: connect adjacent identical tokens downwards.
              */
 
             // Cycle through list of linked new text tokens
             var bordersLength = bordersDown.length;
-            for ( var match = 0; match < bordersLength; match ++ ) {
+            for ( var match = 0; match < bordersLength; match++ ) {
                 var i = bordersDown[match][0];
                 var j = bordersDown[match][1];
 
@@ -1696,7 +1590,6 @@ var WikEdDiff = function () {
                     this.newText.tokens[i].link === null &&
                     this.oldText.tokens[j].link === null
                 ) {
-
                     // Connect if same token
                     if ( this.newText.tokens[i].token === this.oldText.tokens[j].token ) {
                         this.newText.tokens[i].link = j;
@@ -1723,7 +1616,7 @@ var WikEdDiff = function () {
 
             // Cycle through list of connected new text tokens
             var bordersLength = bordersUp.length;
-            for ( var match = 0; match < bordersLength; match ++ ) {
+            for ( var match = 0; match < bordersLength; match++ ) {
                 var i = bordersUp[match][0];
                 var j = bordersUp[match][1];
 
@@ -1740,7 +1633,6 @@ var WikEdDiff = function () {
                     this.newText.tokens[i].link === null &&
                     this.oldText.tokens[j].link === null
                 ) {
-
                     // Connect if same token
                     if ( this.newText.tokens[i].token === this.oldText.tokens[j].token ) {
                         this.newText.tokens[i].link = j;
@@ -1768,7 +1660,6 @@ var WikEdDiff = function () {
 
             // Only for full text diff
             if ( recursionLevel === 0 && repeating === false ) {
-
                 // From start
                 var i = this.newText.first;
                 var j = this.oldText.first;
@@ -1856,14 +1747,13 @@ var WikEdDiff = function () {
                 this.config['recursiveDiff'] === true &&
                 recursionLevel < this.config.recursionMax
             ) {
-
                 /**
                  * Recursively diff gap downwards.
                  */
 
                 // Cycle through list of linked region borders
                 var bordersLength = bordersDownNext.length;
-                for ( match = 0; match < bordersLength; match ++ ) {
+                for ( match = 0; match < bordersLength; match++ ) {
                     var i = bordersDownNext[match][0];
                     var j = bordersDownNext[match][1];
 
@@ -1890,7 +1780,7 @@ var WikEdDiff = function () {
 
                 // Cycle through list of linked region borders
                 var bordersLength = bordersUpNext.length;
-                for ( match = 0; match < bordersLength; match ++ ) {
+                for ( match = 0; match < bordersLength; match++ ) {
                     var i = bordersUpNext[match][0];
                     var j = bordersUpNext[match][1];
 
@@ -1945,7 +1835,6 @@ var WikEdDiff = function () {
      * @param[in/out] WikEdDiffText newText, oldText Text object tokens list
      */
     this.detectBlocks = function () {
-
         // Debug log
         if ( this.config.debug === true ) {
             this.oldText.debugText( 'Old text' );
@@ -1966,7 +1855,7 @@ var WikEdDiff = function () {
 
         // Convert groups to insertions/deletions if maximum block length is too short
         // Only for more complex texts that actually have blocks of minimum block length
-        var unlinkCount = 0;
+        let unlinkCount = 0;
         if (
             this.config.unlinkBlocks === true &&
             this.config.blockMinLength > 0 &&
@@ -1977,15 +1866,14 @@ var WikEdDiff = function () {
             }
 
             // Repeat as long as unlinking is possible
-            var unlinked = true;
+            let unlinked = true;
             while ( unlinked === true && unlinkCount < this.config.unlinkMax ) {
-
                 // Convert '=' to '+'/'-' pairs
                 unlinked = this.unlinkBlocks();
 
                 // Start over after conversion
                 if ( unlinked === true ) {
-                    unlinkCount ++;
+                    unlinkCount++;
                     this.slideGaps( this.newText, this.oldText );
                     this.slideGaps( this.oldText, this.newText );
 
@@ -2035,21 +1923,19 @@ var WikEdDiff = function () {
      * @param[in/out] array blocks Blocks table object
      */
     this.getSameBlocks = function () {
-
         if ( this.config.timer === true ) {
             this.time( 'getSameBlocks' );
         }
 
-        var blocks = this.blocks;
+        const blocks = this.blocks;
 
         // Clear blocks array
         blocks.splice( 0 );
 
         // Cycle through old text to find connected (linked, matched) blocks
-        var j = this.oldText.first;
-        var i = null;
+        let j = this.oldText.first;
+        let i = null;
         while ( j !== null ) {
-
             // Skip '-' blocks
             while ( j !== null && this.oldText.tokens[j].link === null ) {
                 j = this.oldText.tokens[j].next;
@@ -2058,16 +1944,16 @@ var WikEdDiff = function () {
             // Get '=' block
             if ( j !== null ) {
                 i = this.oldText.tokens[j].link;
-                var iStart = i;
-                var jStart = j;
+                const iStart = i;
+                const jStart = j;
 
                 // Detect matching blocks ('=')
-                var count = 0;
-                var unique = false;
-                var text = '';
+                let count = 0;
+                let unique = false;
+                let text = '';
                 while ( i !== null && j !== null && this.oldText.tokens[j].link === i ) {
                     text += this.oldText.tokens[j].token;
-                    count ++;
+                    count++;
                     if ( this.newText.tokens[i].unique === true ) {
                         unique = true;
                     }
@@ -2082,8 +1968,8 @@ var WikEdDiff = function () {
                     oldNumber: this.oldText.tokens[jStart].number,
                     newNumber: this.newText.tokens[iStart].number,
                     oldStart:  jStart,
-                    count:     count,
-                    unique:    unique,
+                    count,
+                    unique,
                     words:     this.wordCount( text ),
                     chars:     text.length,
                     type:      '=',
@@ -2091,7 +1977,7 @@ var WikEdDiff = function () {
                     group:     null,
                     fixed:     null,
                     moved:     null,
-                    text:      text
+                    text
                 } );
             }
         }
@@ -2100,8 +1986,8 @@ var WikEdDiff = function () {
         blocks.sort( (a, b) => a.newNumber - b.newNumber );
 
         // Number blocks in new text order
-        var blocksLength = blocks.length;
-        for ( var block = 0; block < blocksLength; block ++ ) {
+        const blocksLength = blocks.length;
+        for ( let block = 0; block < blocksLength; block++ ) {
             blocks[block].newBlock = block;
         }
 
@@ -2119,30 +2005,27 @@ var WikEdDiff = function () {
      * @param[in/out] array blocks Blocks table object, section property
      */
     this.getSections = function () {
-
         if ( this.config.timer === true ) {
             this.time( 'getSections' );
         }
 
-        var blocks = this.blocks;
-        var sections = this.sections;
+        const blocks = this.blocks;
+        const sections = this.sections;
 
         // Clear sections array
         sections.splice( 0 );
 
         // Cycle through blocks
-        var blocksLength = blocks.length;
-        for ( var block = 0; block < blocksLength; block ++ ) {
+        const blocksLength = blocks.length;
+        for ( let block = 0; block < blocksLength; block++ ) {
+            const sectionStart = block;
+            let sectionEnd = block;
 
-            var sectionStart = block;
-            var sectionEnd = block;
-
-            var oldMax = blocks[sectionStart].oldNumber;
-            var sectionOldMax = oldMax;
+            let oldMax = blocks[sectionStart].oldNumber;
+            let sectionOldMax = oldMax;
 
             // Check right
-            for ( var j = sectionStart + 1; j < blocksLength; j ++ ) {
-
+            for ( let j = sectionStart + 1; j < blocksLength; j++ ) {
                 // Check for crossing over to the left
                 if ( blocks[j].oldNumber > oldMax ) {
                     oldMax = blocks[j].oldNumber;
@@ -2155,9 +2038,8 @@ var WikEdDiff = function () {
 
             // Save crossing sections
             if ( sectionEnd > sectionStart ) {
-
                 // Save section to block
-                for ( var i = sectionStart; i <= sectionEnd; i ++ ) {
+                for ( let i = sectionStart; i <= sectionEnd; i++ ) {
                     blocks[i].section = sections.length;
                 }
 
@@ -2182,33 +2064,31 @@ var WikEdDiff = function () {
      * @param[in/out] array blocks Blocks table object, group property
      */
     this.getGroups = function () {
-
         if ( this.config.timer === true ) {
             this.time( 'getGroups' );
         }
 
-        var blocks = this.blocks;
-        var groups = this.groups;
+        const blocks = this.blocks;
+        const groups = this.groups;
 
         // Clear groups array
         groups.splice( 0 );
 
         // Cycle through blocks
-        var blocksLength = blocks.length;
-        for ( var block = 0; block < blocksLength; block ++ ) {
-            var groupStart = block;
-            var groupEnd = block;
-            var oldBlock = blocks[groupStart].oldBlock;
+        const blocksLength = blocks.length;
+        for ( let block = 0; block < blocksLength; block++ ) {
+            const groupStart = block;
+            let groupEnd = block;
+            let oldBlock = blocks[groupStart].oldBlock;
 
             // Get word and char count of block
-            var words = this.wordCount( blocks[block].text );
-            var maxWords = words;
-            var unique = blocks[block].unique;
-            var chars = blocks[block].chars;
+            let words = this.wordCount( blocks[block].text );
+            let maxWords = words;
+            let unique = blocks[block].unique;
+            let chars = blocks[block].chars;
 
             // Check right
-            for ( var i = groupEnd + 1; i < blocksLength; i ++ ) {
-
+            for ( var i = groupEnd + 1; i < blocksLength; i++ ) {
                 // Check for crossing over to the left
                 if ( blocks[i].oldBlock !== oldBlock + 1 ) {
                     break;
@@ -2229,15 +2109,14 @@ var WikEdDiff = function () {
 
             // Save crossing group
             if ( groupEnd >= groupStart ) {
-
                 // Set groups outside sections as fixed
-                var fixed = false;
+                let fixed = false;
                 if ( blocks[groupStart].section === null ) {
                     fixed = true;
                 }
 
                 // Save group to block
-                for ( var i = groupStart; i <= groupEnd; i ++ ) {
+                for ( var i = groupStart; i <= groupEnd; i++ ) {
                     blocks[i].group = groups.length;
                     blocks[i].fixed = fixed;
                 }
@@ -2247,11 +2126,11 @@ var WikEdDiff = function () {
                     oldNumber:  blocks[groupStart].oldNumber,
                     blockStart: groupStart,
                     blockEnd:   groupEnd,
-                    unique:     unique,
-                    maxWords:   maxWords,
-                    words:      words,
-                    chars:      chars,
-                    fixed:      fixed,
+                    unique,
+                    maxWords,
+                    words,
+                    chars,
+                    fixed,
                     movedFrom:  null,
                     color:      null
                 } );
@@ -2277,32 +2156,31 @@ var WikEdDiff = function () {
      * @param[in/out] array blocks Blocks table object, fixed property
      */
     this.setFixed = function () {
-
         if ( this.config.timer === true ) {
             this.time( 'setFixed' );
         }
 
-        var blocks = this.blocks;
-        var groups = this.groups;
-        var sections = this.sections;
+        const blocks = this.blocks;
+        const groups = this.groups;
+        const sections = this.sections;
 
         // Cycle through sections
-        var sectionsLength = sections.length;
-        for ( var section = 0; section < sectionsLength; section ++ ) {
-            var blockStart = sections[section].blockStart;
-            var blockEnd = sections[section].blockEnd;
+        const sectionsLength = sections.length;
+        for ( let section = 0; section < sectionsLength; section++ ) {
+            const blockStart = sections[section].blockStart;
+            const blockEnd = sections[section].blockEnd;
 
-            var groupStart = blocks[blockStart].group;
-            var groupEnd = blocks[blockEnd].group;
+            const groupStart = blocks[blockStart].group;
+            const groupEnd = blocks[blockEnd].group;
 
             // Recusively find path of groups in increasing old group order with longest char length
-            var cache = [];
-            var maxChars = 0;
-            var maxPath = null;
+            const cache = [];
+            let maxChars = 0;
+            let maxPath = null;
 
             // Start at each group of section
-            for ( var i = groupStart; i <= groupEnd; i ++ ) {
-                var pathObj = this.findMaxPath( i, groupEnd, cache );
+            for ( var i = groupStart; i <= groupEnd; i++ ) {
+                const pathObj = this.findMaxPath( i, groupEnd, cache );
                 if ( pathObj.chars > maxChars ) {
                     maxPath = pathObj.path;
                     maxChars = pathObj.chars;
@@ -2310,13 +2188,13 @@ var WikEdDiff = function () {
             }
 
             // Mark fixed groups
-            var maxPathLength = maxPath.length;
-            for ( var i = 0; i < maxPathLength; i ++ ) {
-                var group = maxPath[i];
+            const maxPathLength = maxPath.length;
+            for ( var i = 0; i < maxPathLength; i++ ) {
+                const group = maxPath[i];
                 groups[group].fixed = true;
 
                 // Mark fixed blocks
-                for ( var block = groups[group].blockStart; block <= groups[group].blockEnd; block ++ ) {
+                for ( let block = groups[group].blockStart; block <= groups[group].blockEnd; block++ ) {
                     blocks[block].fixed = true;
                 }
             }
@@ -2336,22 +2214,20 @@ var WikEdDiff = function () {
      * @return array returnObj Contains path and char length
      */
     this.findMaxPath = function ( start, groupEnd, cache ) {
-
-        var groups = this.groups;
+        const groups = this.groups;
 
         // Find longest sub-path
-        var maxChars = 0;
-        var oldNumber = groups[start].oldNumber;
-        var returnObj = { path: [], chars: 0};
-        for ( var i = start + 1; i <= groupEnd; i ++ ) {
-
+        let maxChars = 0;
+        const oldNumber = groups[start].oldNumber;
+        let returnObj = { path: [], chars: 0};
+        for ( let i = start + 1; i <= groupEnd; i++ ) {
             // Only in increasing old group order
             if ( groups[i].oldNumber < oldNumber ) {
                 continue;
             }
 
             // Get longest sub-path from cache (deep copy)
-            var pathObj;
+            let pathObj;
             if ( cache[i] !== undefined ) {
                 pathObj = { path: cache[i].path.slice(), chars: cache[i].chars };
             }
@@ -2392,20 +2268,19 @@ var WikEdDiff = function () {
      * @return bool True if text tokens were unlinked
      */
     this.unlinkBlocks = function () {
-
-        var blocks = this.blocks;
-        var groups = this.groups;
+        const blocks = this.blocks;
+        const groups = this.groups;
 
         // Cycle through groups
-        var unlinked = false;
-        var groupsLength = groups.length;
-        for ( var group = 0; group < groupsLength; group ++ ) {
-            var blockStart = groups[group].blockStart;
-            var blockEnd = groups[group].blockEnd;
+        let unlinked = false;
+        const groupsLength = groups.length;
+        for ( let group = 0; group < groupsLength; group++ ) {
+            let blockStart = groups[group].blockStart;
+            const blockEnd = groups[group].blockEnd;
 
             // Unlink whole group if no block is at least blockMinLength words long and unique
             if ( groups[group].maxWords < this.config.blockMinLength && groups[group].unique === false ) {
-                for ( var block = blockStart; block <= blockEnd; block ++ ) {
+                for ( var block = blockStart; block <= blockEnd; block++ ) {
                     if ( blocks[block].type === '=' ) {
                         this.unlinkSingleBlock( blocks[block] );
                         unlinked = true;
@@ -2415,11 +2290,9 @@ var WikEdDiff = function () {
 
             // Otherwise unlink block flanks
             else {
-
                 // Unlink blocks from start
-                for ( var block = blockStart; block <= blockEnd; block ++ ) {
+                for ( var block = blockStart; block <= blockEnd; block++ ) {
                     if ( blocks[block].type === '=' ) {
-
                         // Stop unlinking if more than one word or a unique word
                         if ( blocks[block].words > 1 || blocks[block].unique === true ) {
                             break;
@@ -2433,7 +2306,6 @@ var WikEdDiff = function () {
                 // Unlink blocks from end
                 for ( var block = blockEnd; block > blockStart; block -- ) {
                     if ( blocks[block].type === '=' ) {
-
                         // Stop unlinking if more than one word or a unique word
                         if (
                             blocks[block].words > 1 ||
@@ -2458,11 +2330,9 @@ var WikEdDiff = function () {
      * @param[out] WikEdDiffText newText, oldText Text objects, link property
      */
     this.unlinkSingleBlock = function ( block ) {
-
         // Cycle through old text
-        var j = block.oldStart;
-        for ( var count = 0; count < block.count; count ++ ) {
-
+        let j = block.oldStart;
+        for ( let count = 0; count < block.count; count++ ) {
             // Unlink tokens
             this.newText.tokens[ this.oldText.tokens[j].link ].link = null;
             this.oldText.tokens[j].link = null;
@@ -2478,24 +2348,22 @@ var WikEdDiff = function () {
      * @param[out] array blocks Blocks table object
      */
     this.getDelBlocks = function () {
-
         if ( this.config.timer === true ) {
             this.time( 'getDelBlocks' );
         }
 
-        var blocks = this.blocks;
+        const blocks = this.blocks;
 
         // Cycle through old text to find connected (linked, matched) blocks
-        var j = this.oldText.first;
-        var i = null;
+        let j = this.oldText.first;
+        let i = null;
         while ( j !== null ) {
-
             // Collect '-' blocks
-            var oldStart = j;
-            var count = 0;
-            var text = '';
+            const oldStart = j;
+            let count = 0;
+            let text = '';
             while ( j !== null && this.oldText.tokens[j].link === null ) {
-                count ++;
+                count++;
                 text += this.oldText.tokens[j].token;
                 j = this.oldText.tokens[j].next;
             }
@@ -2507,8 +2375,8 @@ var WikEdDiff = function () {
                     newBlock:  null,
                     oldNumber: this.oldText.tokens[oldStart].number,
                     newNumber: null,
-                    oldStart:  oldStart,
-                    count:     count,
+                    oldStart,
+                    count,
                     unique:    false,
                     words:     null,
                     chars:     text.length,
@@ -2517,7 +2385,7 @@ var WikEdDiff = function () {
                     group:     null,
                     fixed:     null,
                     moved:     null,
-                    text:      text
+                    text
                 } );
             }
 
@@ -2552,22 +2420,21 @@ var WikEdDiff = function () {
      *
      */
     this.positionDelBlocks = function () {
-
         if ( this.config.timer === true ) {
             this.time( 'positionDelBlocks' );
         }
 
-        var blocks = this.blocks;
-        var groups = this.groups;
+        const blocks = this.blocks;
+        const groups = this.groups;
 
         // Sort shallow copy of blocks by oldNumber
-        var blocksOld = blocks.slice();
+        const blocksOld = blocks.slice();
         blocksOld.sort( (a, b) => a.oldNumber - b.oldNumber );
 
         // Cycle through blocks in old text order
-        var blocksOldLength = blocksOld.length;
-        for ( var block = 0; block < blocksOldLength; block ++ ) {
-            var delBlock = blocksOld[block];
+        const blocksOldLength = blocksOld.length;
+        for ( let block = 0; block < blocksOldLength; block++ ) {
+            const delBlock = blocksOld[block];
 
             // '-' block only
             if ( delBlock.type !== '-' ) {
@@ -2578,23 +2445,23 @@ var WikEdDiff = function () {
             // Similar to position marks '|' code
 
             // Get old text prev block
-            var prevBlockNumber = null;
-            var prevBlock = null;
+            let prevBlockNumber = null;
+            let prevBlock = null;
             if ( block > 0 ) {
                 prevBlockNumber = blocksOld[block - 1].newBlock;
                 prevBlock = blocks[prevBlockNumber];
             }
 
             // Get old text next block
-            var nextBlockNumber = null;
-            var nextBlock = null;
+            let nextBlockNumber = null;
+            let nextBlock = null;
             if ( block < blocksOld.length - 1 ) {
                 nextBlockNumber = blocksOld[block + 1].newBlock;
                 nextBlock = blocks[nextBlockNumber];
             }
 
             // Move after prev block if fixed
-            var refBlock = null;
+            let refBlock = null;
             if ( prevBlock !== null && prevBlock.type === '=' && prevBlock.fixed === true ) {
                 refBlock = prevBlock;
             }
@@ -2624,7 +2491,7 @@ var WikEdDiff = function () {
 
             // Move after closest previous fixed block
             else {
-                for ( var fixed = block; fixed >= 0; fixed -- ) {
+                for ( let fixed = block; fixed >= 0; fixed -- ) {
                     if ( blocksOld[fixed].type === '=' && blocksOld[fixed].fixed === true ) {
                         refBlock = blocksOld[fixed];
                         break;
@@ -2662,17 +2529,15 @@ var WikEdDiff = function () {
      * @param[out] array blocks Blocks table object
      */
     this.getInsBlocks = function () {
-
         if ( this.config.timer === true ) {
             this.time( 'getInsBlocks' );
         }
 
-        var blocks = this.blocks;
+        const blocks = this.blocks;
 
         // Cycle through new text to find insertion blocks
-        var i = this.newText.first;
+        let i = this.newText.first;
         while ( i !== null ) {
-
             // Jump over linked (matched) block
             while ( i !== null && this.newText.tokens[i].link !== null ) {
                 i = this.newText.tokens[i].next;
@@ -2680,11 +2545,11 @@ var WikEdDiff = function () {
 
             // Detect insertion blocks ('+')
             if ( i !== null ) {
-                var iStart = i;
-                var count = 0;
-                var text = '';
+                const iStart = i;
+                let count = 0;
+                let text = '';
                 while ( i !== null && this.newText.tokens[i].link === null ) {
-                    count ++;
+                    count++;
                     text += this.newText.tokens[i].token;
                     i = this.newText.tokens[i].next;
                 }
@@ -2696,7 +2561,7 @@ var WikEdDiff = function () {
                     oldNumber: null,
                     newNumber: this.newText.tokens[iStart].number,
                     oldStart:  null,
-                    count:     count,
+                    count,
                     unique:    false,
                     words:     null,
                     chars:     text.length,
@@ -2705,7 +2570,7 @@ var WikEdDiff = function () {
                     group:     null,
                     fixed:     null,
                     moved:     null,
-                    text:      text
+                    text
                 } );
             }
         }
@@ -2726,13 +2591,12 @@ var WikEdDiff = function () {
      * @param[in/out] array blocks Blocks table object
      */
     this.sortBlocks = function () {
-
-        var blocks = this.blocks;
-        var groups = this.groups;
+        const blocks = this.blocks;
+        const groups = this.groups;
 
         // Sort by newNumber, then by old number
         blocks.sort( (a, b) => {
-            var comp = a.newNumber - b.newNumber;
+            let comp = a.newNumber - b.newNumber;
             if ( comp === 0 ) {
                 comp = a.oldNumber - b.oldNumber;
             }
@@ -2740,10 +2604,10 @@ var WikEdDiff = function () {
         } );
 
         // Cycle through blocks and update groups with new block numbers
-        var group = null;
-        var blocksLength = blocks.length;
-        for ( var block = 0; block < blocksLength; block ++ ) {
-            var blockGroup = blocks[block].group;
+        let group = null;
+        const blocksLength = blocks.length;
+        for ( let block = 0; block < blocksLength; block++ ) {
+            const blockGroup = blocks[block].group;
             if ( blockGroup !== null ) {
                 if ( blockGroup !== group ) {
                     group = blocks[block].group;
@@ -2763,19 +2627,18 @@ var WikEdDiff = function () {
      * @param[in/out] array blocks Blocks table object, fixed and group properties
      */
     this.setInsGroups = function () {
-
         if ( this.config.timer === true ) {
             this.time( 'setInsGroups' );
         }
 
-        var blocks = this.blocks;
-        var groups = this.groups;
+        const blocks = this.blocks;
+        const groups = this.groups;
 
         // Set group numbers of '+' blocks inside existing groups
-        var groupsLength = groups.length;
-        for ( var group = 0; group < groupsLength; group ++ ) {
-            var fixed = groups[group].fixed;
-            for ( var block = groups[group].blockStart; block <= groups[group].blockEnd; block ++ ) {
+        const groupsLength = groups.length;
+        for ( let group = 0; group < groupsLength; group++ ) {
+            const fixed = groups[group].fixed;
+            for ( var block = groups[group].blockStart; block <= groups[group].blockEnd; block++ ) {
                 if ( blocks[block].group === null ) {
                     blocks[block].group = group;
                     blocks[block].fixed = fixed;
@@ -2786,9 +2649,8 @@ var WikEdDiff = function () {
         // Add remaining '+' blocks to new groups
 
         // Cycle through blocks
-        var blocksLength = blocks.length;
-        for ( var block = 0; block < blocksLength; block ++ ) {
-
+        const blocksLength = blocks.length;
+        for ( var block = 0; block < blocksLength; block++ ) {
             // Skip existing groups
             if ( blocks[block].group === null ) {
                 blocks[block].group = groups.length;
@@ -2836,28 +2698,27 @@ var WikEdDiff = function () {
      * @param[in/out] array blocks Blocks table object
      */
     this.insertMarks = function () {
-
         if ( this.config.timer === true ) {
             this.time( 'insertMarks' );
         }
 
-        var blocks = this.blocks;
-        var groups = this.groups;
+        const blocks = this.blocks;
+        const groups = this.groups;
         var moved = [];
-        var color = 1;
+        let color = 1;
 
         // Make shallow copy of blocks
-        var blocksOld = blocks.slice();
+        const blocksOld = blocks.slice();
 
         // Enumerate copy
-        var blocksOldLength = blocksOld.length;
-        for ( var i = 0; i < blocksOldLength; i ++ ) {
+        const blocksOldLength = blocksOld.length;
+        for ( var i = 0; i < blocksOldLength; i++ ) {
             blocksOld[i].number = i;
         }
 
         // Sort copy by oldNumber
         blocksOld.sort( (a, b) => {
-            var comp = a.oldNumber - b.oldNumber;
+            let comp = a.oldNumber - b.oldNumber;
             if ( comp === 0 ) {
                 comp = a.newNumber - b.newNumber;
             }
@@ -2865,39 +2726,39 @@ var WikEdDiff = function () {
         } );
 
         // Create lookup table: original to sorted
-        var lookupSorted = [];
-        for ( var i = 0; i < blocksOldLength; i ++ ) {
+        const lookupSorted = [];
+        for ( var i = 0; i < blocksOldLength; i++ ) {
             lookupSorted[ blocksOld[i].number ] = i;
         }
 
         // Cycle through groups (moved group)
-        var groupsLength = groups.length;
-        for ( var moved = 0; moved < groupsLength; moved ++ ) {
-            var movedGroup = groups[moved];
+        const groupsLength = groups.length;
+        for ( var moved = 0; moved < groupsLength; moved++ ) {
+            const movedGroup = groups[moved];
             if ( movedGroup.fixed !== false ) {
                 continue;
             }
-            var movedOldNumber = movedGroup.oldNumber;
+            const movedOldNumber = movedGroup.oldNumber;
 
             // Find fixed '=' reference block from original block position to position '|' block
             // Similar to position deletions '-' code
 
             // Get old text prev block
-            var prevBlock = null;
+            let prevBlock = null;
             var block = lookupSorted[ movedGroup.blockStart ];
             if ( block > 0 ) {
                 prevBlock = blocksOld[block - 1];
             }
 
             // Get old text next block
-            var nextBlock = null;
+            let nextBlock = null;
             var block = lookupSorted[ movedGroup.blockEnd ];
             if ( block < blocksOld.length - 1 ) {
                 nextBlock = blocksOld[block + 1];
             }
 
             // Move after prev block if fixed
-            var refBlock = null;
+            let refBlock = null;
             if ( prevBlock !== null && prevBlock.type === '=' && prevBlock.fixed === true ) {
                 refBlock = prevBlock;
             }
@@ -2909,7 +2770,7 @@ var WikEdDiff = function () {
 
             // Find closest fixed block to the left
             else {
-                for ( var fixed = lookupSorted[ movedGroup.blockStart ] - 1; fixed >= 0; fixed -- ) {
+                for ( let fixed = lookupSorted[ movedGroup.blockStart ] - 1; fixed >= 0; fixed -- ) {
                     if ( blocksOld[fixed].type === '=' && blocksOld[fixed].fixed === true ) {
                         refBlock = blocksOld[fixed];
                         break;
@@ -2918,8 +2779,8 @@ var WikEdDiff = function () {
             }
 
             // Get position of new mark block
-            var newNumber;
-            var markGroup;
+            let newNumber;
+            let markGroup;
 
             // No smaller fixed block, moved right from before first block
             if ( refBlock === null ) {
@@ -2950,7 +2811,7 @@ var WikEdDiff = function () {
                 oldBlock:  null,
                 newBlock:  null,
                 oldNumber: movedOldNumber,
-                newNumber: newNumber,
+                newNumber,
                 oldStart:  null,
                 count:     null,
                 unique:    null,
@@ -2960,14 +2821,14 @@ var WikEdDiff = function () {
                 section:   null,
                 group:     markGroup,
                 fixed:     true,
-                moved:     moved,
+                moved,
                 text:      ''
             } );
 
             // Set group color
             movedGroup.color = color;
             movedGroup.movedFrom = markGroup;
-            color ++;
+            color++;
         }
 
         // Sort '|' blocks in and update groups
@@ -2993,23 +2854,22 @@ var WikEdDiff = function () {
      * @param[out] array fragments Fragments array, abstraction layer for diff code
      */
     this.getDiffFragments = function () {
-
-        var blocks = this.blocks;
-        var groups = this.groups;
-        var fragments = this.fragments;
+        const blocks = this.blocks;
+        const groups = this.groups;
+        const fragments = this.fragments;
 
         // Make shallow copy of groups and sort by blockStart
-        var groupsSort = groups.slice();
+        const groupsSort = groups.slice();
         groupsSort.sort( (a, b) => a.blockStart - b.blockStart );
 
         // Cycle through groups
-        var groupsSortLength = groupsSort.length;
-        for ( var group = 0; group < groupsSortLength; group ++ ) {
-            var blockStart = groupsSort[group].blockStart;
-            var blockEnd = groupsSort[group].blockEnd;
+        const groupsSortLength = groupsSort.length;
+        for ( let group = 0; group < groupsSortLength; group++ ) {
+            const blockStart = groupsSort[group].blockStart;
+            const blockEnd = groupsSort[group].blockEnd;
 
             // Add moved block start
-            var color = groupsSort[group].color;
+            const color = groupsSort[group].color;
             if ( color !== null ) {
                 var type;
                 if ( groupsSort[group].movedFrom < blocks[ blockStart ].group ) {
@@ -3020,34 +2880,34 @@ var WikEdDiff = function () {
                 }
                 fragments.push( {
                     text:  '',
-                    type:  type,
-                    color: color
+                    type,
+                    color
                 } );
             }
 
             // Cycle through blocks
-            for ( var block = blockStart; block <= blockEnd; block ++ ) {
+            for ( let block = blockStart; block <= blockEnd; block++ ) {
                 var type = blocks[block].type;
 
                 // Add '=' unchanged text and moved block
                 if ( type === '=' || type === '-' || type === '+' ) {
                     fragments.push( {
                         text:  blocks[block].text,
-                        type:  type,
-                        color: color
+                        type,
+                        color
                     } );
                 }
 
                 // Add '<' and '>' marks
                 else if ( type === '|' ) {
-                    var movedGroup = groups[ blocks[block].moved ];
+                    const movedGroup = groups[ blocks[block].moved ];
 
                     // Get mark text
-                    var markText = '';
+                    let markText = '';
                     for (
-                        var movedBlock = movedGroup.blockStart;
+                        let movedBlock = movedGroup.blockStart;
                         movedBlock <= movedGroup.blockEnd;
-                        movedBlock ++
+                        movedBlock++
                     ) {
                         if ( blocks[movedBlock].type === '=' || blocks[movedBlock].type === '-' ) {
                             markText += blocks[movedBlock].text;
@@ -3055,7 +2915,7 @@ var WikEdDiff = function () {
                     }
 
                     // Get mark direction
-                    var markType;
+                    let markType;
                     if ( movedGroup.blockStart < blockStart ) {
                         markType = '<';
                     }
@@ -3077,22 +2937,20 @@ var WikEdDiff = function () {
                 fragments.push( {
                     text:  '',
                     type:  ' )',
-                    color: color
+                    color
                 } );
             }
         }
 
         // Cycle through fragments, join consecutive fragments of same type (i.e. '-' blocks)
-        var fragmentsLength = fragments.length;
-        for ( var fragment = 1; fragment < fragmentsLength; fragment ++ ) {
-
+        const fragmentsLength = fragments.length;
+        for ( let fragment = 1; fragment < fragmentsLength; fragment++ ) {
             // Check if joinable
             if (
                 fragments[fragment].type === fragments[fragment - 1].type &&
                 fragments[fragment].color === fragments[fragment - 1].color &&
                 fragments[fragment].text !== '' && fragments[fragment - 1].text !== ''
             ) {
-
                 // Join and splice
                 fragments[fragment - 1].text += fragments[fragment].text;
                 fragments.splice( fragment, 1 );
@@ -3116,8 +2974,7 @@ var WikEdDiff = function () {
      * @param[in/out] array fragments Fragments array, abstraction layer for diff code
      */
     this.clipDiffFragments = function () {
-
-        var fragments = this.fragments;
+        const fragments = this.fragments;
 
         // Skip if only one fragment in containers, no change
         if ( fragments.length === 5 ) {
@@ -3125,7 +2982,7 @@ var WikEdDiff = function () {
         }
 
         // Min length for clipping right
-        var minRight = this.config.clipHeadingRight;
+        let minRight = this.config.clipHeadingRight;
         if ( this.config.clipParagraphRightMin < minRight ) {
             minRight = this.config.clipParagraphRightMin;
         }
@@ -3140,7 +2997,7 @@ var WikEdDiff = function () {
         }
 
         // Min length for clipping left
-        var minLeft = this.config.clipHeadingLeft;
+        let minLeft = this.config.clipHeadingLeft;
         if ( this.config.clipParagraphLeftMin < minLeft ) {
             minLeft = this.config.clipParagraphLeftMin;
         }
@@ -3155,27 +3012,26 @@ var WikEdDiff = function () {
         }
 
         // Cycle through fragments
-        var fragmentsLength = fragments.length;
-        for ( var fragment = 0; fragment < fragmentsLength; fragment ++ ) {
-
+        let fragmentsLength = fragments.length;
+        for ( let fragment = 0; fragment < fragmentsLength; fragment++ ) {
             // Skip if not an unmoved and unchanged block
-            var type = fragments[fragment].type;
-            var color = fragments[fragment].color;
+            const type = fragments[fragment].type;
+            const color = fragments[fragment].color;
             if ( type !== '=' || color !== null ) {
                 continue;
             }
 
             // Skip if too short for clipping
-            var text = fragments[fragment].text;
-            var textLength = text.length;
+            const text = fragments[fragment].text;
+            const textLength = text.length;
             if ( textLength < minRight && textLength < minLeft ) {
                 continue;
             }
 
             // Get line positions including start and end
-            var lines = [];
+            const lines = [];
             var lastIndex = null;
-            var regExpMatch;
+            let regExpMatch;
             while ( ( regExpMatch = this.config.regExp.clipLine.exec( text ) ) !== null ) {
                 lines.push( regExpMatch.index );
                 lastIndex = this.config.regExp.clipLine.lastIndex;
@@ -3188,15 +3044,15 @@ var WikEdDiff = function () {
             }
 
             // Get heading positions
-            var headings = [];
-            var headingsEnd = [];
+            const headings = [];
+            const headingsEnd = [];
             while ( ( regExpMatch = this.config.regExp.clipHeading.exec( text ) ) !== null ) {
                 headings.push( regExpMatch.index );
                 headingsEnd.push( regExpMatch.index + regExpMatch[0].length );
             }
 
             // Get paragraph positions including start and end
-            var paragraphs = [];
+            const paragraphs = [];
             var lastIndex = null;
             while ( ( regExpMatch = this.config.regExp.clipParagraph.exec( text ) ) !== null ) {
                 paragraphs.push( regExpMatch.index );
@@ -3210,24 +3066,23 @@ var WikEdDiff = function () {
             }
 
             // Determine ranges to keep on left and right side
-            var rangeRight = null;
-            var rangeLeft = null;
-            var rangeRightType = '';
-            var rangeLeftType = '';
+            let rangeRight = null;
+            let rangeLeft = null;
+            let rangeRightType = '';
+            let rangeLeftType = '';
 
             // Find clip pos from left, skip for first non-container block
             if ( fragment !== 2 ) {
-
                 // Maximum lines to search from left
-                var rangeLeftMax = textLength;
+                let rangeLeftMax = textLength;
                 if ( this.config.clipLinesLeftMax < lines.length ) {
                     rangeLeftMax = lines[this.config.clipLinesLeftMax];
                 }
 
                 // Find first heading from left
                 if ( rangeLeft === null ) {
-                    var headingsLength = headingsEnd.length;
-                    for ( var j = 0; j < headingsLength; j ++ ) {
+                    const headingsLength = headingsEnd.length;
+                    for ( var j = 0; j < headingsLength; j++ ) {
                         if ( headingsEnd[j] > this.config.clipHeadingLeft || headingsEnd[j] > rangeLeftMax ) {
                             break;
                         }
@@ -3239,8 +3094,8 @@ var WikEdDiff = function () {
 
                 // Find first paragraph from left
                 if ( rangeLeft === null ) {
-                    var paragraphsLength = paragraphs.length;
-                    for ( var j = 0; j < paragraphsLength; j ++ ) {
+                    const paragraphsLength = paragraphs.length;
+                    for ( var j = 0; j < paragraphsLength; j++ ) {
                         if (
                             paragraphs[j] > this.config.clipParagraphLeftMax ||
                             paragraphs[j] > rangeLeftMax
@@ -3258,7 +3113,7 @@ var WikEdDiff = function () {
                 // Find first line break from left
                 if ( rangeLeft === null ) {
                     var linesLength = lines.length;
-                    for ( var j = 0; j < linesLength; j ++ ) {
+                    for ( var j = 0; j < linesLength; j++ ) {
                         if ( lines[j] > this.config.clipLineLeftMax || lines[j] > rangeLeftMax ) {
                             break;
                         }
@@ -3301,9 +3156,8 @@ var WikEdDiff = function () {
 
             // Find clip pos from right, skip for last non-container block
             if ( fragment !== fragments.length - 3 ) {
-
                 // Maximum lines to search from right
-                var rangeRightMin = 0;
+                let rangeRightMin = 0;
                 if ( lines.length >= this.config.clipLinesRightMax ) {
                     rangeRightMin = lines[lines.length - this.config.clipLinesRightMax];
                 }
@@ -3359,12 +3213,12 @@ var WikEdDiff = function () {
 
                 // Find last blank from right
                 if ( rangeRight === null ) {
-                    var startPos = textLength - this.config.clipBlankRightMax;
+                    let startPos = textLength - this.config.clipBlankRightMax;
                     if ( startPos < rangeRightMin ) {
                         startPos = rangeRightMin;
                     }
                     this.config.regExp.clipBlank.lastIndex = startPos;
-                    var lastPos = null;
+                    let lastPos = null;
                     while ( ( regExpMatch = this.config.regExp.clipBlank.exec( text ) ) !== null ) {
                         if ( regExpMatch.index > textLength - this.config.clipBlankRightMin ) {
                             if ( lastPos !== null ) {
@@ -3394,27 +3248,26 @@ var WikEdDiff = function () {
 
             // Check if we skip clipping if ranges are close together
             if ( rangeLeft !== null && rangeRight !== null ) {
-
                 // Skip if overlapping ranges
                 if ( rangeLeft > rangeRight ) {
                     continue;
                 }
 
                 // Skip if chars too close
-                var skipChars = rangeRight - rangeLeft;
+                const skipChars = rangeRight - rangeLeft;
                 if ( skipChars < this.config.clipSkipChars ) {
                     continue;
                 }
 
                 // Skip if lines too close
-                var skipLines = 0;
+                let skipLines = 0;
                 var linesLength = lines.length;
-                for ( var j = 0; j < linesLength; j ++ ) {
+                for ( var j = 0; j < linesLength; j++ ) {
                     if ( lines[j] > rangeRight || skipLines > this.config.clipSkipLines ) {
                         break;
                     }
                     if ( lines[j] > rangeLeft ) {
-                        skipLines ++;
+                        skipLines++;
                     }
                 }
                 if ( skipLines < this.config.clipSkipLines ) {
@@ -3428,8 +3281,8 @@ var WikEdDiff = function () {
             }
 
             // Split left text
-            var textLeft = null;
-            var omittedLeft = null;
+            let textLeft = null;
+            let omittedLeft = null;
             if ( rangeLeft !== null ) {
                 textLeft = text.slice( 0, rangeLeft );
 
@@ -3448,8 +3301,8 @@ var WikEdDiff = function () {
             }
 
             // Split right text
-            var textRight = null;
-            var omittedRight = null;
+            let textRight = null;
+            let omittedRight = null;
             if ( rangeRight !== null ) {
                 textRight = text.slice( rangeRight );
 
@@ -3473,30 +3326,30 @@ var WikEdDiff = function () {
 
             // Add left text to fragments list
             if ( rangeLeft !== null ) {
-                fragments.splice( fragment ++, 0, { text: textLeft, type: '=', color: null } );
-                fragmentsLength ++;
+                fragments.splice( fragment++, 0, { text: textLeft, type: '=', color: null } );
+                fragmentsLength++;
                 if ( omittedLeft !== null ) {
-                    fragments.splice( fragment ++, 0, { text: '', type: omittedLeft, color: null } );
-                    fragmentsLength ++;
+                    fragments.splice( fragment++, 0, { text: '', type: omittedLeft, color: null } );
+                    fragmentsLength++;
                 }
             }
 
             // Add fragment container and separator to list
             if ( rangeLeft !== null && rangeRight !== null ) {
-                fragments.splice( fragment ++, 0, { text: '', type: ']', color: null } );
-                fragments.splice( fragment ++, 0, { text: '', type: ',', color: null } );
-                fragments.splice( fragment ++, 0, { text: '', type: '[', color: null } );
+                fragments.splice( fragment++, 0, { text: '', type: ']', color: null } );
+                fragments.splice( fragment++, 0, { text: '', type: ',', color: null } );
+                fragments.splice( fragment++, 0, { text: '', type: '[', color: null } );
                 fragmentsLength += 3;
             }
 
             // Add right text to fragments list
             if ( rangeRight !== null ) {
                 if ( omittedRight !== null ) {
-                    fragments.splice( fragment ++, 0, { text: '', type: omittedRight, color: null } );
-                    fragmentsLength ++;
+                    fragments.splice( fragment++, 0, { text: '', type: omittedRight, color: null } );
+                    fragmentsLength++;
                 }
-                fragments.splice( fragment ++, 0, { text: textRight, type: '=', color: null } );
-                fragmentsLength ++;
+                fragments.splice( fragment++, 0, { text: textRight, type: '=', color: null } );
+                fragmentsLength++;
             }
         }
 
@@ -3517,8 +3370,7 @@ var WikEdDiff = function () {
      * @param[out] string html Html code of diff
      */
     this.getDiffHtml = function ( version ) {
-
-        var fragments = this.fragments;
+        const fragments = this.fragments;
 
         // No change, only one unchanged block in containers
         if ( fragments.length === 5 && fragments[2].type === '=' ) {
@@ -3527,16 +3379,16 @@ var WikEdDiff = function () {
         }
 
         // Cycle through fragments
-        var htmlFragments = [];
-        var fragmentsLength = fragments.length;
-        for ( var fragment = 0; fragment < fragmentsLength; fragment ++ ) {
-            var text = fragments[fragment].text;
-            var type = fragments[fragment].type;
-            var color = fragments[fragment].color;
-            var html = '';
+        const htmlFragments = [];
+        const fragmentsLength = fragments.length;
+        for ( let fragment = 0; fragment < fragmentsLength; fragment++ ) {
+            let text = fragments[fragment].text;
+            const type = fragments[fragment].type;
+            const color = fragments[fragment].color;
+            let html = '';
 
             // Test if text is blanks-only or a single character
-            var blank = false;
+            let blank = false;
             if ( text !== '' ) {
                 blank = this.config.regExp.blankBlock.test( text );
             }
@@ -3573,18 +3425,17 @@ var WikEdDiff = function () {
 
             // Add omission markup
             if ( type === ' ~' ) {
-                html = ' ' + this.config.htmlCode.omittedChars;
+                html = ` ${this.config.htmlCode.omittedChars}`;
             }
 
             // Add omission markup
             if ( type === '~ ' ) {
-                html = this.config.htmlCode.omittedChars + ' ';
+                html = `${this.config.htmlCode.omittedChars} `;
             }
 
             // Add colored left-pointing block start markup
             else if ( type === '(<' ) {
                 if ( version !== 'old' ) {
-
                     // Get title
                     var title;
                     if ( this.config.noUnicodeSymbols === true ) {
@@ -3608,7 +3459,6 @@ var WikEdDiff = function () {
             // Add colored right-pointing block start markup
             else if ( type === '(>' ) {
                 if ( version !== 'old' ) {
-
                     // Get title
                     var title;
                     if ( this.config.noUnicodeSymbols === true ) {
@@ -3652,7 +3502,6 @@ var WikEdDiff = function () {
             // Add '-' text
             else if ( type === '-' ) {
                 if ( version !== 'new' ) {
-
                     // For old version skip '-' inside moved group
                     if ( version !== 'old' || color === null ) {
                         text = this.htmlEscape( text );
@@ -3686,7 +3535,6 @@ var WikEdDiff = function () {
             // Add '<' and '>' code
             else if ( type === '<' || type === '>' ) {
                 if ( version !== 'new' ) {
-
                     // Display as deletion at original position
                     if ( this.config.showBlockMoves === false || version === 'old' ) {
                         text = this.htmlEscape( text );
@@ -3760,7 +3608,6 @@ var WikEdDiff = function () {
      * @return string Customized html code
      */
     this.htmlCustomize = function ( html, number, title ) {
-
         // Replace {number} with class/color/block/mark/id number
         html = html.replace( /\{number\}/g, number);
 
@@ -3774,9 +3621,9 @@ var WikEdDiff = function () {
 
         // Shorten title text, replace {title}
         if ( title !== undefined ) {
-            var max = 512;
-            var end = 128;
-            var gapMark = ' [...] ';
+            const max = 512;
+            const end = 128;
+            const gapMark = ' [...] ';
             if ( title.length > max ) {
                 title =
                     title.substr( 0, max - gapMark.length - end ) +
@@ -3799,7 +3646,6 @@ var WikEdDiff = function () {
      * @return string Escaped html code
      */
     this.htmlEscape = html => {
-
         html = html.replace( /&/g, '&amp;');
         html = html.replace( /</g, '&lt;');
         html = html.replace( />/g, '&gt;');
@@ -3816,7 +3662,6 @@ var WikEdDiff = function () {
      * @return string Marked-up text
      */
     this.markupBlanks = function ( html, highlight ) {
-
         if ( highlight === true ) {
             html = html.replace( / /g, this.config.htmlCode.space);
             html = html.replace( /\n/g, this.config.htmlCode.newline);
@@ -3833,7 +3678,6 @@ var WikEdDiff = function () {
      * @return int Number of words in text
      */
     this.wordCount = function ( text ) {
-
         return ( text.match( this.config.regExp.countWords ) || [] ).length;
     };
 
@@ -3845,7 +3689,6 @@ var WikEdDiff = function () {
      * @param[in] WikEdDiffText newText, oldText Text objects
      */
     this.unitTests = function () {
-
         // Check if output is consistent with new text
         this.getDiffHtml( 'new' );
         var diff = this.html.replace( /<[^>]*>/g, '');
@@ -3888,24 +3731,18 @@ var WikEdDiff = function () {
      * @param[in] array blocks Blocks table object
      */
     this.debugBlocks = function ( name, blocks ) {
-
         if ( blocks === undefined ) {
             blocks = this.blocks;
         }
-        var dump =
+        let dump =
             '\ni \toldBl \tnewBl \toldNm \tnewNm \toldSt \tcount \tuniq' +
             '\twords \tchars \ttype \tsect \tgroup \tfixed \tmoved \ttext\n';
-        var blocksLength = blocks.length;
-        for ( var i = 0; i < blocksLength; i ++ ) {
+        const blocksLength = blocks.length;
+        for ( let i = 0; i < blocksLength; i++ ) {
             dump +=
-                i + ' \t' + blocks[i].oldBlock + ' \t' + blocks[i].newBlock + ' \t' +
-                blocks[i].oldNumber + ' \t' + blocks[i].newNumber + ' \t' + blocks[i].oldStart + ' \t' +
-                blocks[i].count + ' \t' + blocks[i].unique + ' \t' + blocks[i].words + ' \t' +
-                blocks[i].chars + ' \t' + blocks[i].type + ' \t' + blocks[i].section + ' \t' +
-                blocks[i].group + ' \t' + blocks[i].fixed + ' \t' + blocks[i].moved + ' \t' +
-                this.debugShortenText( blocks[i].text ) + '\n';
+                `${i} \t${blocks[i].oldBlock} \t${blocks[i].newBlock} \t${blocks[i].oldNumber} \t${blocks[i].newNumber} \t${blocks[i].oldStart} \t${blocks[i].count} \t${blocks[i].unique} \t${blocks[i].words} \t${blocks[i].chars} \t${blocks[i].type} \t${blocks[i].section} \t${blocks[i].group} \t${blocks[i].fixed} \t${blocks[i].moved} \t${this.debugShortenText( blocks[i].text )}\n`;
         }
-        console.log( name + ':\n' + dump );
+        console.log( `${name}:\n${dump}` );
     };
 
 
@@ -3916,22 +3753,17 @@ var WikEdDiff = function () {
      * @param[in] array groups Groups table object
      */
     this.debugGroups = function ( name, groups ) {
-
         if ( groups === undefined ) {
             groups = this.groups;
         }
-        var dump =
+        let dump =
             '\ni \toldNm \tblSta \tblEnd \tuniq \tmaxWo' +
             '\twords \tchars \tfixed \toldNm \tmFrom \tcolor\n';
-        var groupsLength = groupsLength;
-        for ( var i = 0; i < groups.length; i ++ ) {
+        for ( let i = 0; i < groups.length; i++ ) {
             dump +=
-                i + ' \t' + groups[i].oldNumber + ' \t' + groups[i].blockStart + ' \t' +
-                groups[i].blockEnd + ' \t' + groups[i].unique + ' \t' + groups[i].maxWords + ' \t' +
-                groups[i].words + ' \t' + groups[i].chars + ' \t' + groups[i].fixed + ' \t' +
-                groups[i].oldNumber + ' \t' + groups[i].movedFrom + ' \t' + groups[i].color + '\n';
+                `${i} \t${groups[i].oldNumber} \t${groups[i].blockStart} \t${groups[i].blockEnd} \t${groups[i].unique} \t${groups[i].maxWords} \t${groups[i].words} \t${groups[i].chars} \t${groups[i].fixed} \t${groups[i].oldNumber} \t${groups[i].movedFrom} \t${groups[i].color}\n`;
         }
-        console.log( name + ':\n' + dump );
+        console.log( `${name}:\n${dump}` );
     };
 
 
@@ -3942,16 +3774,14 @@ var WikEdDiff = function () {
      * @param[in] array fragments Fragments array
      */
     this.debugFragments = function ( name ) {
-
-        var fragments = this.fragments;
-        var dump = '\ni \ttype \tcolor \ttext\n';
-        var fragmentsLength = fragments.length;
-        for ( var i = 0; i < fragmentsLength; i ++ ) {
+        const fragments = this.fragments;
+        let dump = '\ni \ttype \tcolor \ttext\n';
+        const fragmentsLength = fragments.length;
+        for ( let i = 0; i < fragmentsLength; i++ ) {
             dump +=
-                i + ' \t"' + fragments[i].type + '" \t' + fragments[i].color + ' \t' +
-                this.debugShortenText( fragments[i].text, 120, 40 ) + '\n';
+                `${i} \t"${fragments[i].type}" \t${fragments[i].color} \t${this.debugShortenText( fragments[i].text, 120, 40 )}\n`;
         }
-        console.log( name + ':\n' + dump );
+        console.log( `${name}:\n${dump}` );
     };
 
 
@@ -3962,11 +3792,10 @@ var WikEdDiff = function () {
      * @param[in] array border Match border array
      */
     this.debugBorders = (name, borders) => {
-
-        var dump = '\ni \t[ new \told ]\n';
-        var bordersLength = borders.length;
-        for ( var i = 0; i < bordersLength; i ++ ) {
-            dump += i + ' \t[ ' + borders[i][0] + ' \t' + borders[i][1] + ' ]\n';
+        let dump = '\ni \t[ new \told ]\n';
+        const bordersLength = borders.length;
+        for ( let i = 0; i < bordersLength; i++ ) {
+            dump += `${i} \t[ ${borders[i][0]} \t${borders[i][1]} ]\n`;
         }
         console.log( name, dump );
     };
@@ -3981,7 +3810,6 @@ var WikEdDiff = function () {
      * @return string Shortened text
      */
     this.debugShortenText = (text, max, end) => {
-
         if ( typeof text !== 'string' ) {
             text = text.toString();
         }
@@ -3994,9 +3822,9 @@ var WikEdDiff = function () {
             end = 15;
         }
         if ( text.length > max ) {
-            text = text.substr( 0, max - 1 - end ) + '…' + text.substr( text.length - end );
+            text = `${text.substr( 0, max - 1 - end )}…${text.substr( text.length - end )}`;
         }
-        return '"' + text + '"';
+        return `"${text}"`;
     };
 
 
@@ -4008,7 +3836,6 @@ var WikEdDiff = function () {
      * @param[out] array timer Current time in milliseconds (float)
      */
     this.time = function ( label ) {
-
         this.timer[label] = new Date().getTime();
     };
 
@@ -4023,15 +3850,14 @@ var WikEdDiff = function () {
      * @return float Time in milliseconds
      */
     this.timeEnd = function ( label, noLog ) {
-
-        var diff = 0;
+        let diff = 0;
         if ( this.timer[label] !== undefined ) {
-            var start = this.timer[label];
-            var stop = new Date().getTime();
+            const start = this.timer[label];
+            const stop = new Date().getTime();
             diff = stop - start;
             this.timer[label] = undefined;
             if ( noLog !== true ) {
-                console.log( label + ': ' + diff.toFixed( 2 ) + ' ms' );
+                console.log( `${label}: ${diff.toFixed( 2 )} ms` );
             }
         }
         return diff;
@@ -4046,19 +3872,17 @@ var WikEdDiff = function () {
      * @param[in] array recursionTimer Accumulated recursion times
      */
     this.timeRecursionEnd = function ( text ) {
-
         if ( this.recursionTimer.length > 1 ) {
-
             // Subtract times spent in deeper recursions
-            var timerEnd = this.recursionTimer.length - 1;
-            for ( var i = 0; i < timerEnd; i ++ ) {
+            const timerEnd = this.recursionTimer.length - 1;
+            for ( var i = 0; i < timerEnd; i++ ) {
                 this.recursionTimer[i] -= this.recursionTimer[i + 1];
             }
 
             // Log recursion times
-            var timerLength = this.recursionTimer.length;
-            for ( var i = 0; i < timerLength; i ++ ) {
-                console.log( text + ' recursion ' + i + ': ' + this.recursionTimer[i].toFixed( 2 ) + ' ms' );
+            const timerLength = this.recursionTimer.length;
+            for ( var i = 0; i < timerLength; i++ ) {
+                console.log( `${text} recursion ${i}: ${this.recursionTimer[i].toFixed( 2 )} ms` );
             }
         }
         this.recursionTimer = [];
@@ -4073,12 +3897,11 @@ var WikEdDiff = function () {
      * @param mixed|undefined name Object to be logged
      */
     this.debug = (name, object) => {
-
         if ( object === undefined ) {
             console.log( name );
         }
         else {
-            console.log( name + ': ' + object );
+            console.log( `${name}: ${object}` );
         }
     };
 
@@ -4089,9 +3912,8 @@ var WikEdDiff = function () {
  * @param string code JavaScript code
  */
     this.addScript = code => {
-
         if ( document.getElementById( 'wikEdDiffBlockHandler' ) === null ) {
-            var script = document.createElement( 'script' );
+            const script = document.createElement( 'script' );
             script.id = 'wikEdDiffBlockHandler';
             if ( script.innerText !== undefined ) {
                 script.innerText = code;
@@ -4111,8 +3933,7 @@ var WikEdDiff = function () {
  * @param object target Target object
  */
     this.deepCopy = function ( source, target ) {
-
-        for ( var key in source ) {
+        for ( const key in source ) {
             if ( Object.prototype.hasOwnProperty.call( source, key ) === true ) {
                 if ( typeof source[key] === 'object' ) {
                     this.deepCopy( source[key], target[key] );
@@ -4135,7 +3956,6 @@ var WikEdDiff = function () {
  * @class WikEdDiffText
  */
 WikEdDiff.WikEdDiffText = function ( text, parent ) {
-
     /** @var WikEdDiff parent Parent object for configuration settings and debugging methods */
     this.parent = parent;
 
@@ -4160,7 +3980,6 @@ WikEdDiff.WikEdDiffText = function ( text, parent ) {
      * @param WikEdDiff parent Parent, for configuration settings and debugging methods
      */
     this.init = function () {
-
         if ( typeof text !== 'string' ) {
             text = text.toString();
         }
@@ -4188,17 +4007,16 @@ WikEdDiff.WikEdDiffText = function ( text, parent ) {
      * @param[out] array words Number of word occurrences
      */
     this.wordParse = function ( regExp ) {
-
-        var regExpMatch = this.text.match( regExp );
+        const regExpMatch = this.text.match( regExp );
         if ( regExpMatch !== null ) {
-            var matchLength = regExpMatch.length;
-            for (var i = 0; i < matchLength; i ++) {
-                var word = regExpMatch[i];
+            const matchLength = regExpMatch.length;
+            for (let i = 0; i < matchLength; i++) {
+                const word = regExpMatch[i];
                 if ( Object.prototype.hasOwnProperty.call( this.words, word ) === false ) {
                     this.words[word] = 1;
                 }
                 else {
-                    this.words[word] ++;
+                    this.words[word]++;
                 }
             }
         }
@@ -4215,12 +4033,11 @@ WikEdDiff.WikEdDiffText = function ( text, parent ) {
      * @param[out] int first, last First and last index of tokens list
      */
     this.splitText = function ( level, token ) {
-
-        var prev = null;
-        var next = null;
-        var current = this.tokens.length;
-        var first = current;
-        var text = '';
+        let prev = null;
+        let next = null;
+        let current = this.tokens.length;
+        const first = current;
+        let text = '';
 
         // Split full text or specified token
         if ( token === undefined ) {
@@ -4233,11 +4050,11 @@ WikEdDiff.WikEdDiffText = function ( text, parent ) {
         }
 
         // Split text into tokens, regExp match as separator
-        var number = 0;
-        var split = [];
-        var regExpMatch;
-        var lastIndex = 0;
-        var regExp = this.parent.config.regExp.split[level];
+        let number = 0;
+        const split = [];
+        let regExpMatch;
+        let lastIndex = 0;
+        const regExp = this.parent.config.regExp.split[level];
         while ( ( regExpMatch = regExp.exec( text ) ) !== null ) {
             if ( regExpMatch.index > lastIndex ) {
                 split.push( text.substring( lastIndex, regExpMatch.index ) );
@@ -4250,26 +4067,25 @@ WikEdDiff.WikEdDiffText = function ( text, parent ) {
         }
 
         // Cycle through new tokens
-        var splitLength = split.length;
-        for ( var i = 0; i < splitLength; i ++ ) {
-
+        const splitLength = split.length;
+        for ( let i = 0; i < splitLength; i++ ) {
             // Insert current item, link to previous
             this.tokens.push( {
                 token:   split[i],
-                prev:    prev,
+                prev,
                 next:    null,
                 link:    null,
                 number:  null,
                 unique:  false
             } );
-            number ++;
+            number++;
 
             // Link previous item to current
             if ( prev !== null ) {
                 this.tokens[prev].next = current;
             }
             prev = current;
-            current ++;
+            current++;
         }
 
         // Connect last new item and existing next item
@@ -4284,7 +4100,6 @@ WikEdDiff.WikEdDiffText = function ( text, parent ) {
 
         // Set text first and last token index
         if ( number > 0 ) {
-
             // Initial text split
             if ( token === undefined ) {
                 this.first = 0;
@@ -4311,11 +4126,9 @@ WikEdDiff.WikEdDiffText = function ( text, parent ) {
      * @param[in] array tokens Tokens list
      */
     this.splitRefine = function ( regExp ) {
-
         // Cycle through tokens list
-        var i = this.first;
+        let i = this.first;
         while ( i !== null ) {
-
             // Refine unique unmatched tokens into smaller tokens
             if ( this.tokens[i].link === null ) {
                 this.splitText( regExp, i );
@@ -4331,13 +4144,12 @@ WikEdDiff.WikEdDiffText = function ( text, parent ) {
      * @param[out] array tokens Tokens list
      */
     this.enumerateTokens = function () {
-
         // Enumerate tokens list
-        var number = 0;
-        var i = this.first;
+        let number = 0;
+        let i = this.first;
         while ( i !== null ) {
             this.tokens[i].number = number;
-            number ++;
+            number++;
             i = this.tokens[i].next;
         }
     };
@@ -4351,19 +4163,16 @@ WikEdDiff.WikEdDiffText = function ( text, parent ) {
      * @param[in] array tokens Tokens list
      */
     this.debugText = function ( name ) {
-
-        var tokens = this.tokens;
-        var dump = 'first: ' + this.first + '\tlast: ' + this.last + '\n';
+        const tokens = this.tokens;
+        let dump = `first: ${this.first}\tlast: ${this.last}\n`;
         dump += '\ni \tlink \t(prev \tnext) \tuniq \t#num \t"token"\n';
-        var i = this.first;
+        let i = this.first;
         while ( i !== null ) {
             dump +=
-                i + ' \t' + tokens[i].link + ' \t(' + tokens[i].prev + ' \t' + tokens[i].next + ') \t' +
-                tokens[i].unique + ' \t#' + tokens[i].number + ' \t' +
-                parent.debugShortenText( tokens[i].token ) + '\n';
+                `${i} \t${tokens[i].link} \t(${tokens[i].prev} \t${tokens[i].next}) \t${tokens[i].unique} \t#${tokens[i].number} \t${parent.debugShortenText( tokens[i].token )}\n`;
             i = tokens[i].next;
         }
-        console.log( name + ':\n' + dump );
+        console.log( `${name}:\n${dump}` );
     };
 
 

@@ -16,7 +16,6 @@
 
 // define global objects
 var WikEdDiffTool = {};
-var WikEdDiff;
 var wikEdDiffConfig;
 var WED;
 
@@ -120,8 +119,8 @@ WikEdDiffTool.diff = function() {
 	// calculate the diff
 	var oldString = document.getElementById('old').value;
 	var newString = document.getElementById('new').value;
-	var wikEdDiff = new WikEdDiff();
-	var diffHtml = wikEdDiff.diff(oldString, newString);
+	var wikEdDiff1 = new WikEdDiff();
+	var diffHtml = wikEdDiff1.diff(oldString, newString);
 	document.getElementById('diff').innerHTML = diffHtml;
 	return;
 };
