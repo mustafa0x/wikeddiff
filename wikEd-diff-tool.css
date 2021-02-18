@@ -1,12 +1,4 @@
-﻿/* debug */
-
-div {
-  /* outline: 1px solid blue; */
-}
-
-/* height */
-
-body, html {
+﻿body, html {
   height: 100%;
   width: 100%;
   margin: 0;
@@ -14,7 +6,6 @@ body, html {
 }
 
 /* main structure */
-
 .main {
   min-height: 100%;
   display: flex;
@@ -52,7 +43,6 @@ body, html {
 }
 
 /* header */
-
 .headerLeft {
   float: left;
   flex: 0 0 auto;
@@ -85,7 +75,6 @@ body, html {
 }
 
 /* headerItem */
-
 .headerItem {
   flex: 1 1 auto;
   display: flex;
@@ -95,7 +84,6 @@ body, html {
 }
 
 /* content */
-
 .contentLeft {
   float: left;
   min-height: 20em;
@@ -119,7 +107,6 @@ body, html {
 }
 
 /* contentLeft */
-
 .contentLeftTop {
   min-height: 50%;
   flex: 1 1 auto;
@@ -139,7 +126,6 @@ body, html {
 }
 
 /* contentItem */
-
 .contentItemTitle {
   min-height: 1.5em;
   flex: 0 1 auto;
@@ -154,7 +140,6 @@ body, html {
 }
 
 /* footer */
-
 .footerLeft{
   float: left;
   flex: 1 1 auto;
@@ -183,7 +168,6 @@ body, html {
 }
 
 /* footerItem */
-
 .footerItemTitle {
   min-height: 1.5em;
   flex: 0 1 auto;
@@ -199,14 +183,12 @@ body, html {
 }
 
 /* styling */
-
 body {
   font-family: sans-serif;
   background: #e0e0e0;
 }
 
 /* logo */
-
 .logo {
   flex: 1 1 auto;
   display: flex;
@@ -229,7 +211,6 @@ body {
 }
 
 /* heading */
-
 .heading {
   background: #fff;
   position: relative;
@@ -254,7 +235,6 @@ body {
 }
 
 /* links */
-
 .links ul {
   list-style: none;
   padding: 0;
@@ -263,7 +243,6 @@ body {
 }
 
 /* versions */
-
 .version_no_flex { /* class added by script */
   clear: both;
   float: left;
@@ -299,7 +278,6 @@ body {
 }
 
 /* diff */
-
 .contentRight .contentItemText {
   background: transparent;
   box-shadow: none;
@@ -316,7 +294,6 @@ body {
 }
 
 /* compare */
-
 .button {
   font-weight: bold;
   border-radius: 0.2em;
@@ -329,7 +306,6 @@ body {
 }
 
 /* titles and boxes */
-
 .headerLeft, .headerCenter, .headerRight {
   background: #fff;
   border-radius: 0.25em;
@@ -354,7 +330,6 @@ body {
 }
 
 /* options */
-
 .footerLeft .footerItemText {
   flex-direction: row;
 }
@@ -385,7 +360,6 @@ body {
 }
 
 /* compare */
-
 .compare, .example {
   text-align: center;
   flex: 1 1 auto;
@@ -396,7 +370,6 @@ body {
 }
 
 /* legend */
-
 .legend {
   text-align: center;
   flex: 1 1 auto;

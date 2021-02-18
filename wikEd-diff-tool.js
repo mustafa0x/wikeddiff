@@ -11,235 +11,170 @@
 /* jshint -W004, -W100, newcap: true, browser: true, jquery: true, sub: true, bitwise: true, curly: true, evil: true, forin: true, freeze: true, globalstrict: true, immed: true, latedef: true, loopfunc: true, quotmark: single, strict: true, undef: true */
 /* global console */
 
-// turn on ECMAScript 5 strict mode
-'use strict';
-
 // define global objects
-var WikEdDiffTool = {};
 var wikEdDiffConfig;
 var WED;
 
+const WikEdDiffTool = {
+    init() {
+        // set debug shortcut
+        if (WED === undefined && window.console !== undefined) {
+            WED = window.console.log;
+        }
 
-//
-// WikEdDiffTool.init(): initialize
-//
+        // define config variable
+        if (wikEdDiffConfig === undefined) {
+            wikEdDiffConfig = {};
+        }
 
-WikEdDiffTool.init = function() {
+        // define all wikEdDiff options
+        WikEdDiffTool.options = [
+            'fullDiff',
+            'showBlockMoves',
+            'charDiff',
+            'repeatedDiff',
+            'recursiveDiff',
+            'recursionMax',
+            'unlinkBlocks',
+            'blockMinLength',
+            'unlinkMax',
+            'coloredBlocks',
+            'debug',
+            'timer',
+            'unitTesting',
+            'noUnicodeSymbols',
+            'stripTrailingNewline'
+        ];
 
-	// set debug shortcut
-	if ( (WED === undefined) && (window.console !== undefined ) ) {
-		WED = window.console.log;
-	}
+        // continue after content has loaded
+        window.addEventListener('DOMContentLoaded', WikEdDiffTool.load);
+    },
 
-	// define config variable
-	if (wikEdDiffConfig === undefined) {
-		wikEdDiffConfig = {};
-	}
+    load() {
+      // attach event handlers
+        $('#old').addEventListener('dragover', WikEdDiffTool.dragHandler, false);
+        $('#old').addEventListener('drop', WikEdDiffTool.dropHandler, false);
 
-	// define all wikEdDiff options
-	WikEdDiffTool.options = [
-		'fullDiff',
-		'showBlockMoves',
-		'charDiff',
-		'repeatedDiff',
-		'recursiveDiff',
-		'recursionMax',
-		'unlinkBlocks',
-		'blockMinLength',
-		'unlinkMax',
-		'coloredBlocks',
-		'debug',
-		'timer',
-		'unitTesting',
-		'noUnicodeSymbols',
-		'stripTrailingNewline'
-	];
+        $('#new').addEventListener('dragover', WikEdDiffTool.dragHandler, false);
+        $('#new').addEventListener('drop', WikEdDiffTool.dropHandler, false);
 
-	// continue after content has loaded
-	if (window.addEventListener !== undefined) {
-		window.addEventListener('DOMContentLoaded', WikEdDiffTool.load);
-	}
-	else {
-		window.onload = WikEdDiffTool.load;
-	}
-	return;
+        document.body.addEventListener('dragover', WikEdDiffTool.preventDropHandler, false);
+
+        // enlarge textareas under non-flex float-based layout
+        if (document.body.style.flex === undefined) {
+            var textareas = $$('textarea');
+            for (var i = 0; i < textareas.length; i ++) {
+                if (textareas[i].className.indexOf('version') > -1) {
+                    textareas[i].className += ' version_no_flex';
+                }
+            }
+        }
+
+        // call diff
+        window.addEventListener('load', WikEdDiffTool.diff);
+    },
+
+    diff() {
+        // get form options
+        for (var option = 0; option < WikEdDiffTool.options.length; option ++) {
+            wikEdDiffConfig[ WikEdDiffTool.options[option] ] = (document.getElementById(WikEdDiffTool.options[option]).checked === true);
+        }
+        wikEdDiffConfig.blockMinLength = parseInt($('#blockMinLength').value);
+        wikEdDiffConfig.unlinkMax = parseInt($('#unlinkMax').value);
+        wikEdDiffConfig.recursionMax = parseInt($('#recursionMax').value);
+
+        // calculate the diff
+        var oldString = $('#old').value;
+        var newString = $('#new').value;
+        var wikEdDiff1 = new WikEdDiff();
+        var diffHtml = wikEdDiff1.diff(oldString, newString);
+        $('#diff').innerHTML = diffHtml;
+    },
+
+    example() {
+        $('#old').value = 'Chocolate is a typically sweet, usually brown, food preparation of seeds, roasted in the form of a liquid, paste or in a block and ground, often flavored, as with vanilla. It is made or used as a flavoring ingredient. Cacao has been cultivated by many cul tures for at lesst three millennia in Mexico and Central America. The earliest evidence of use traces to the Mokaya, with back to 1900 evidence of chocolate beverages dating BC. See also: \n- Candy making\n- Chocolate almonds';
+
+        $('#new').value = 'Chocolate is a food preparation of Theobroma cacao seeds, roasted and ground, often flavored, as with vanilla. It is made in the form of a liquid, paste or in a block or used as a flavoring ingredient. Cacao has been cultivated by many cultures for at least three millennia in Mexico and Central America. The earliest evidence of use traces to the Mokaya, with evidence of chocolate beverages dating back to 1900 BC. See also:\n- Candy making\n- Chocolate chip\n- Chocolate almonds';
+
+        WikEdDiffTool.diff();
+    },
+
+    clear() {
+        $('#old').value = '';
+        $('#new').value = '';
+        WikEdDiffTool.diff();
+    },
+
+    //
+    // WikEdDiffTool.getFileText(): get text file content, cycles through all files in file list object
+    //
+    getFileText(fileListObj, target, fileNumber) {
+        if (fileNumber >= fileListObj.length)
+            return;
+
+        var fileObj = fileListObj[ fileNumber ];
+        if (target.value !== '')
+            target.value += '\n\n'
+
+        // get size and format
+        var size = fileObj.size;
+        var sizeFormatted = size + '';
+        sizeFormatted = sizeFormatted.replace(/(\d\d\d)?(\d\d\d)?(\d\d\d)?(\d\d\d)$/, ',$1,$2,$3,$4')
+                                     .replace(/^,+/, '')
+                                     .replace(/,,+/, ',');
+        target.value += encodeURI(fileObj.name) + ' (' + sizeFormatted + ' bytes):\n';
+
+        // check file length
+        var contentMB = parseInt(size / 1024 / 1024 * 10) / 10;
+        if (contentMB > 10) {
+            target.value += 'Error: file larger than 10 MB (' + contentMB + ' MB)\n';
+            WikEdDiffTool.getFileText(fileListObj, target, fileNumber + 1);
+            return;
+        }
+
+        // read file content asynchronously
+        var readerObj = new FileReader();
+        readerObj.onload = function() {
+            target.value += readerObj.result;
+            WikEdDiffTool.getFileText(fileListObj, target, fileNumber + 1);
+        }
+        readerObj.readAsText(fileObj);
+    },
+
+    //
+    // WikEdDiffTool.dropHandler(): event handler for dropping files on old or new fields
+    //
+    dropHandler(event) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        // get FileList object.
+        var fileListObj = event.dataTransfer.files;
+        event.target.value = '';
+
+        // get text from dropped files
+        WikEdDiffTool.getFileText(fileListObj, event.target, 0)
+    },
+
+    //
+    // WikEdDiffTool.dragHandler(): event handler for dropping files on old or new fields
+    //
+    dragHandler(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+    },
+
+
+    //
+    // WikEdDiffTool.preventDropHandler(): disable drag and drop over certain elements
+    //
+    preventDropHandler(event) {
+        event.stopPropagation();
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'none';
+    },
 };
-
-
-//
-// WikEdDiffTool.load(): run diff
-//
-
-WikEdDiffTool.load = function() {
-
-  // attach event handlers
-	document.getElementById('old').addEventListener( 'dragover', WikEdDiffTool.dragHandler, false );
-	document.getElementById('old').addEventListener( 'drop', WikEdDiffTool.dropHandler, false );
-
-	document.getElementById('new').addEventListener( 'dragover', WikEdDiffTool.dragHandler, false );
-	document.getElementById('new').addEventListener( 'drop', WikEdDiffTool.dropHandler, false );
-
-	document.body.addEventListener( 'dragover', WikEdDiffTool.preventDropHandler, false );
-
-	// enlarge textareas under non-flex float-based layout
-	if (document.body.style.flex === undefined) {
-		var textareas = document.getElementsByTagName('textarea');
-		for (var i = 0; i < textareas.length; i ++) {
-			if (textareas[i].className.indexOf('version') > -1) {
-				textareas[i].className += ' version_no_flex';
-			}
-		}
-	}
-
-	// call diff
-	if (window.addEventListener !== undefined) {
-		window.addEventListener('load', WikEdDiffTool.diff);
-	}
-	else {
-		window.onload = WikEdDiffTool.diff;
-	}
-	return;
-};
-
-
-//
-// WikEdDiffTool.diff(): click handler for compare button, get options and text versions, call wikEdDiff.diff()
-//
-
-WikEdDiffTool.diff = function() {
-
-	// get form options
-	for (var option = 0; option < WikEdDiffTool.options.length; option ++) {
-		wikEdDiffConfig[ WikEdDiffTool.options[option] ] = (document.getElementById(WikEdDiffTool.options[option]).checked === true);
-	}
-	wikEdDiffConfig.blockMinLength = parseInt(document.getElementById('blockMinLength').value);
-	wikEdDiffConfig.unlinkMax = parseInt(document.getElementById('unlinkMax').value);
-	wikEdDiffConfig.recursionMax = parseInt(document.getElementById('recursionMax').value);
-
-	// calculate the diff
-	var oldString = document.getElementById('old').value;
-	var newString = document.getElementById('new').value;
-	var wikEdDiff1 = new WikEdDiff();
-	var diffHtml = wikEdDiff1.diff(oldString, newString);
-	document.getElementById('diff').innerHTML = diffHtml;
-	return;
-};
-
-
-//
-// WikEdDiffTool.example(): click handler for example button, load example text, call WikEdDiffTool.diff()
-//
-
-WikEdDiffTool.example = function() {
-
-	document.getElementById('old').value = 'Chocolate is a typically sweet, usually brown, food preparation of seeds, roasted in the form of a liquid, paste or in a block and ground, often flavored, as with vanilla. It is made or used as a flavoring ingredient. Cacao has been cultivated by many cul tures for at lesst three millennia in Mexico and Central America. The earliest evidence of use traces to the Mokaya, with back to 1900 evidence of chocolate beverages dating BC. See also: \n- Candy making\n- Chocolate almonds';
-
-	document.getElementById('new').value = 'Chocolate is a food preparation of Theobroma cacao seeds, roasted and ground, often flavored, as with vanilla. It is made in the form of a liquid, paste or in a block or used as a flavoring ingredient. Cacao has been cultivated by many cultures for at least three millennia in Mexico and Central America. The earliest evidence of use traces to the Mokaya, with evidence of chocolate beverages dating back to 1900 BC. See also:\n- Candy making\n- Chocolate chip\n- Chocolate almonds';
-
-	WikEdDiffTool.diff();
-	return;
-};
-
-
-//
-// WikEdDiffTool.clear(): click handler for clear button, clear example text and results
-//
-
-WikEdDiffTool.clear = function() {
-
-	document.getElementById('old').value = '';
-	document.getElementById('new').value = '';
-	WikEdDiffTool.diff();
-	return;
-};
-
-
-//
-// WikEdDiffTool.dropHandler(): event handler for dropping files on old or new fields
-//
-
-WikEdDiffTool.dropHandler = function( event ) {
-
-	event.stopPropagation();
-	event.preventDefault();
-
-	// get FileList object.
-	var fileListObj = event.dataTransfer.files;
-	event.target.value = '';
-
-	// get text from dropped files
-	WikEdDiffTool.getFileText( fileListObj, event.target, 0 )
-	return;
-};
-
-
-//
-// WikEdDiffTool.getFileText(): get text file content, cycles through all files in file list object
-//
-
-WikEdDiffTool.getFileText = function( fileListObj, target, fileNumber ) {
-
-	if ( fileNumber >= fileListObj.length ) {
-		return;
-	}
-	var fileObj = fileListObj[ fileNumber ];
-	if ( target.value !== '' ) {
-		target.value += '\n\n'
-	}
-
-	// get size and format
-	var size = fileObj.size;
-	var sizeFormatted = size + '';
-	sizeFormatted = sizeFormatted.replace( /(\d\d\d)?(\d\d\d)?(\d\d\d)?(\d\d\d)$/, ',$1,$2,$3,$4' );
-	sizeFormatted = sizeFormatted.replace( /^,+/, '' );
-	sizeFormatted = sizeFormatted.replace( /,,+/, ',' );
-	target.value += encodeURI( fileObj.name ) + ' (' + sizeFormatted + ' bytes):\n';
-
-	// check file length
-	var contentMB = parseInt( size / 1024 / 1024 * 10 ) / 10;
-	if ( contentMB > 10 ) {
-		target.value += 'Error: file larger than 10 MB (' + contentMB + ' MB)\n';
-		WikEdDiffTool.getFileText( fileListObj, target, fileNumber + 1 );
-		return;
-	}
-
-	// read file content asynchronously
-	var readerObj = new FileReader();
-	readerObj.onload = function() {
-		target.value += readerObj.result;
-		WikEdDiffTool.getFileText( fileListObj, target, fileNumber + 1 );
-		return;
-	}
-	readerObj.readAsText( fileObj );
-	return;
-}
-
-
-//
-// WikEdDiffTool.dragHandler(): event handler for dropping files on old or new fields
-//
-
-WikEdDiffTool.dragHandler = function( event ) {
-
-	event.stopPropagation();
-	event.preventDefault();
-	event.dataTransfer.dropEffect = 'copy';
-	return;
-};
-
-
-//
-// WikEdDiffTool.preventDropHandler(): disable drag and drop over certain elements
-//
-
-WikEdDiffTool.preventDropHandler = function( event ) {
-
-	event.stopPropagation();
-	event.preventDefault();
-	event.dataTransfer.dropEffect = 'none';
-	return;
-};
-
 
 // initialize WikEdDiffTool
 WikEdDiffTool.init();
