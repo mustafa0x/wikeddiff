@@ -410,9 +410,9 @@ export default function WikEdDiff() {
             `[${this.config.regExpNewLinesAll}${this.config.regExpNewParagraph}]+`, 'g'
         ),
         clipHeading: new RegExp(
-            '(^|\\n)(==+.+?==+|\\{\\||\\|\\}).*?(?=\\n|$)', 'g'),
+            '( ^|\\n)(==+.+?==+|\\{\\||\\|\\}).*?(?=\\n|$)', 'g' ),
         clipParagraph: new RegExp(
-            `((\\r\\n|\\n|\\r){2,}|[${this.config.regExpNewParagraph}])+`, 'g'
+            `( (\\r\\n|\\n|\\r){2,}|[${this.config.regExpNewParagraph}])+`, 'g'
         ),
         clipBlank: new RegExp(
             `[${this.config.regExpBlanks}]+`, 'g'
@@ -3448,7 +3448,7 @@ export default function WikEdDiff() {
             }
 
             // Add colored block end markup
-            else if (type === ')') {
+            else if (type === ' )') {
                 if (version !== 'old') {
                     html = this.config.htmlCode.blockEnd;
                 }
