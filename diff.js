@@ -138,7 +138,7 @@ var wikEdDiffConfig;
  *
  * @class WikEdDiff
  */
-export default function WikEdDiff() {
+export default function WikEdDiff(conf) {
     /** @var array config Configuration and customization settings. */
     this.config = {
         /** Core diff settings (with default values). */
@@ -668,12 +668,8 @@ export default function WikEdDiff() {
      * @param[out] object config Settings
      */
 
-    this.init = function() {
-        // Import customizations from wikEdDiffConfig{}
-        if (typeof wikEdDiffConfig === 'object') {
-            this.deepCopy(wikEdDiffConfig, this.config);
-        }
-
+    this.init = function(conf) {
+        Object.assign(this.config, conf);
         // Load block handler script
         if (this.config.showBlockMoves === true) {
             window.wikEdDiffBlockHandler = this.config.blockHandler;
@@ -714,8 +710,8 @@ export default function WikEdDiff() {
         }
 
         // Load version strings into WikEdDiffText objects
-        this.newText = new WikEdDiff.WikEdDiffText(newString, this);
-        this.oldText = new WikEdDiff.WikEdDiffText(oldString, this);
+        this.newText = new WikEdDiffText(newString, this);
+        this.oldText = new WikEdDiffText(oldString, this);
 
         // Trap trivial changes: no change
         if (this.newText.text === this.oldText.text) {
@@ -3858,56 +3854,11 @@ export default function WikEdDiff() {
      * @param mixed|undefined name Object to be logged
      */
     this.debug = (name, object) => {
-        if (object === undefined) {
-            console.log(name);
-        }
-        else {
-            console.log(`${name}: ${object}`);
-        }
-    };
-
-
-/**
- * Add script to document head.
- *
- * @param string code JavaScript code
- */
-    this.addScript = code => {
-        if (document.getElementById('wikEdDiffBlockHandler') === null) {
-            const script = document.createElement('script');
-            script.id = 'wikEdDiffBlockHandler';
-            if (script.innerText !== undefined) {
-                script.innerText = code;
-            }
-            else {
-                script.textContent = code;
-            }
-            document.getElementsByTagName('head')[0].appendChild(script);
-        }
-    };
-
-
-/**
- * Recursive deep copy from target over source for customization import.
- *
- * @param object source Source object
- * @param object target Target object
- */
-    this.deepCopy = function(source, target) {
-        for (const key in source) {
-            if (Object.prototype.hasOwnProperty.call(source, key) === true) {
-                if (typeof source[key] === 'object') {
-                    this.deepCopy(source[key], target[key]);
-                }
-                else {
-                    target[key] = source[key];
-                }
-            }
-        }
+        console.log(object === undefined ? name : `${name}: ${object}`);
     };
 
     // Initialze WikEdDiff object
-    this.init();
+    this.init(conf);
 };
 
 
@@ -3916,12 +3867,12 @@ export default function WikEdDiff() {
  *
  * @class WikEdDiffText
  */
-WikEdDiff.WikEdDiffText = function(text, parent) {
+function WikEdDiffText(text, parent) {
     /** @var WikEdDiff parent Parent object for configuration settings and debugging methods */
     this.parent = parent;
 
     /** @var string text Text of this version */
-    this.text = null;
+    this.text = text;
 
     /** @var array tokens Tokens list */
     this.tokens = [];
@@ -3933,7 +3884,6 @@ WikEdDiff.WikEdDiffText = function(text, parent) {
     /** @var array words Word counts for version text */
     this.words = {};
 
-
     /**
      * Constructor, initialize text object.
      *
@@ -3941,13 +3891,6 @@ WikEdDiff.WikEdDiffText = function(text, parent) {
      * @param WikEdDiff parent Parent, for configuration settings and debugging methods
      */
     this.init = function() {
-        if (typeof text !== 'string') {
-            text = text.toString();
-        }
-
-        // IE / Mac fix
-        this.text = text.replace(/\r\n?/g, '\n');
-
         // Parse and count words and chunks for identification of unique real words
         if (this.parent.config.timer === true) {
             this.parent.time('wordParse');
@@ -3959,7 +3902,6 @@ WikEdDiff.WikEdDiffText = function(text, parent) {
         }
     };
 
-
     /**
      * Parse and count words and chunks for identification of unique words.
      *
@@ -3969,20 +3911,19 @@ WikEdDiff.WikEdDiffText = function(text, parent) {
      */
     this.wordParse = function(regExp) {
         const regExpMatch = this.text.match(regExp);
-        if (regExpMatch !== null) {
-            const matchLength = regExpMatch.length;
-            for (let i = 0; i < matchLength; i++) {
-                const word = regExpMatch[i];
-                if (Object.prototype.hasOwnProperty.call(this.words, word) === false) {
-                    this.words[word] = 1;
-                }
-                else {
-                    this.words[word]++;
-                }
+        if (!regExpMatch)
+            return;
+        const matchLength = regExpMatch.length;
+        for (let i = 0; i < matchLength; i++) {
+            const word = regExpMatch[i];
+            if (Object.prototype.hasOwnProperty.call(this.words, word) === false) {
+                this.words[word] = 1;
+            }
+            else {
+                this.words[word]++;
             }
         }
     };
-
 
     /**
      * Split text into paragraph, line, sentence, chunk, word, or character tokens.
@@ -4079,7 +4020,6 @@ WikEdDiff.WikEdDiffText = function(text, parent) {
         }
     };
 
-
     /**
      * Split unique unmatched tokens into smaller tokens.
      *
@@ -4098,7 +4038,6 @@ WikEdDiff.WikEdDiffText = function(text, parent) {
         }
     };
 
-
     /**
      * Enumerate text token list before detecting blocks.
      *
@@ -4115,7 +4054,6 @@ WikEdDiff.WikEdDiffText = function(text, parent) {
         }
     };
 
-
     /**
      * Dump tokens object to browser console.
      *
@@ -4125,8 +4063,7 @@ WikEdDiff.WikEdDiffText = function(text, parent) {
      */
     this.debugText = function(name) {
         const tokens = this.tokens;
-        let dump = `first: ${this.first}\tlast: ${this.last}\n`;
-        dump += '\ni \tlink \t(prev \tnext) \tuniq \t#num \t"token"\n';
+        let dump = `first: ${this.first}\tlast: ${this.last}\n\ni \tlink \t(prev \tnext) \tuniq \t#num \t"token"\n`;
         let i = this.first;
         while (i !== null) {
             dump +=
@@ -4135,7 +4072,6 @@ WikEdDiff.WikEdDiffText = function(text, parent) {
         }
         console.log(`${name}:\n${dump}`);
     };
-
 
     // Initialize WikEdDiffText object
     this.init();

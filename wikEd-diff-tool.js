@@ -11,27 +11,17 @@
 /* jshint -W004, -W100, newcap: true, browser: true, jquery: true, sub: true, bitwise: true, curly: true, evil: true, forin: true, freeze: true, globalstrict: true, immed: true, latedef: true, loopfunc: true, quotmark: single, strict: true, undef: true */
 /* global console */
 
+import WikEdDiff from './diff.js';
 const $ = (s, cont) => (cont || document).querySelector(s);
 const $$ = (s, cont) => (cont || document).querySelectorAll(s);
 
 // define global objects
-var wikEdDiffConfig;
-var WED;
+var config = {};
 
 const WikEdDiffTool = {
     init() {
-        // set debug shortcut
-        if (WED === undefined && window.console !== undefined) {
-            WED = window.console.log;
-        }
-
-        // define config variable
-        if (wikEdDiffConfig === undefined) {
-            wikEdDiffConfig = {};
-        }
-
         // define all wikEdDiff options
-        WikEdDiffTool.options = [
+        this.options = [
             'fullDiff',
             'showBlockMoves',
             'charDiff',
@@ -50,47 +40,33 @@ const WikEdDiffTool = {
         ];
 
         // continue after content has loaded
-        window.addEventListener('DOMContentLoaded', WikEdDiffTool.load);
+        window.addEventListener('DOMContentLoaded', () => { this.load(); });
     },
 
     load() {
       // attach event handlers
-        $('#old').addEventListener('dragover', WikEdDiffTool.dragHandler, false);
-        $('#old').addEventListener('drop', WikEdDiffTool.dropHandler, false);
+        $('#old').addEventListener('dragover', () => { this.dragHandler(); }, false);
+        $('#old').addEventListener('drop', () => { this.dropHandler(); }, false);
 
-        $('#new').addEventListener('dragover', WikEdDiffTool.dragHandler, false);
-        $('#new').addEventListener('drop', WikEdDiffTool.dropHandler, false);
+        $('#new').addEventListener('dragover', () => { this.dragHandler(); }, false);
+        $('#new').addEventListener('drop', () => { this.dropHandler(); }, false);
 
-        document.body.addEventListener('dragover', WikEdDiffTool.preventDropHandler, false);
-
-        // enlarge textareas under non-flex float-based layout
-        if (document.body.style.flex === undefined) {
-            var textareas = $$('textarea');
-            for (var i = 0; i < textareas.length; i ++) {
-                if (textareas[i].className.indexOf('version') > -1) {
-                    textareas[i].className += ' version_no_flex';
-                }
-            }
-        }
+        document.body.addEventListener('dragover', () => { this.preventDropHandler(); }, false);
 
         // call diff
-        window.addEventListener('load', WikEdDiffTool.diff);
+        window.addEventListener('load', () => { this.diff(); });
     },
 
     diff() {
         // get form options
-        for (var option = 0; option < WikEdDiffTool.options.length; option ++) {
-            wikEdDiffConfig[ WikEdDiffTool.options[option] ] = (document.getElementById(WikEdDiffTool.options[option]).checked === true);
+        for (var option = 0; option < this.options.length; option ++) {
+            config[this.options[option]] = document.getElementById(this.options[option]).checked === true;
         }
-        wikEdDiffConfig.blockMinLength = +$('#blockMinLength').value;
-        wikEdDiffConfig.unlinkMax = +$('#unlinkMax').value;
-        wikEdDiffConfig.recursionMax = +$('#recursionMax').value;
+        config.blockMinLength = +$('#blockMinLength').value;
+        config.unlinkMax = +$('#unlinkMax').value;
+        config.recursionMax = +$('#recursionMax').value;
 
-        // calculate the diff
-        var oldString = $('#old').value;
-        var newString = $('#new').value;
-        var diffHtml = (new WikEdDiff()).diff(oldString, newString);
-        $('#diff').innerHTML = diffHtml;
+        $('#diff').innerHTML = (new WikEdDiff(config)).diff($('#old').value, $('#new').value);
     },
 
     example() {
@@ -98,13 +74,13 @@ const WikEdDiffTool = {
 
         $('#new').value = 'Chocolate is a food preparation of Theobroma cacao seeds, roasted and ground, often flavored, as with vanilla. It is made in the form of a liquid, paste or in a block or used as a flavoring ingredient. Cacao has been cultivated by many cultures for at least three millennia in Mexico and Central America. The earliest evidence of use traces to the Mokaya, with evidence of chocolate beverages dating back to 1900 BC. See also:\n- Candy making\n- Chocolate chip\n- Chocolate almonds';
 
-        WikEdDiffTool.diff();
+        this.diff();
     },
 
     clear() {
         $('#old').value = '';
         $('#new').value = '';
-        WikEdDiffTool.diff();
+        this.diff();
     },
 
     //
@@ -130,7 +106,7 @@ const WikEdDiffTool = {
         var contentMB = parseInt(size / 1024 / 1024 * 10) / 10;
         if (contentMB > 10) {
             target.value += 'Error: file larger than 10 MB (' + contentMB + ' MB)\n';
-            WikEdDiffTool.getFileText(fileListObj, target, fileNumber + 1);
+            this.getFileText(fileListObj, target, fileNumber + 1);
             return;
         }
 
@@ -138,7 +114,7 @@ const WikEdDiffTool = {
         var readerObj = new FileReader();
         readerObj.onload = function() {
             target.value += readerObj.result;
-            WikEdDiffTool.getFileText(fileListObj, target, fileNumber + 1);
+            this.getFileText(fileListObj, target, fileNumber + 1);
         }
         readerObj.readAsText(fileObj);
     },
@@ -155,7 +131,7 @@ const WikEdDiffTool = {
         event.target.value = '';
 
         // get text from dropped files
-        WikEdDiffTool.getFileText(fileListObj, event.target, 0)
+        this.getFileText(fileListObj, event.target, 0)
     },
 
     //
@@ -180,3 +156,4 @@ const WikEdDiffTool = {
 
 // initialize WikEdDiffTool
 WikEdDiffTool.init();
+window.WikEdDiffTool = WikEdDiffTool;

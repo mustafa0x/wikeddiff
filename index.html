@@ -1,10 +1,9 @@
 <!doctype html>
-<title>المقارنة بين النصوص</title>
 <meta charset=utf-8>
+<title>المقارنة بين النصوص</title>
 <link rel=stylesheet href=wikEd-diff-tool.css>
 <link rel=stylesheet href=diff-styles.css>
-<script src=diff.js></script>
-<script src=wikEd-diff-tool.js></script>
+<script src=wikEd-diff-tool.js type=module></script>
 
 <div class=main dir=rtl>
 <div class=content>
@@ -25,7 +24,8 @@
     <div class=contentItemTitle>النتائج
     </div>
     <div class=contentItemText>
-      <div class=diff id=diff>
+      <div class=diff id=diff dir=auto>
+
       </div>
     </div>
   </div>
@@ -38,15 +38,15 @@
     </div>
     <div class=footerItemText>
       <div class=compare>
-        <button class=button onclick=WikEdDiffTool.diff();>قارن</button>
+        <button class=button onclick="WikEdDiffTool.diff();">قارن</button>
       </div>
     </div>
     <!-- <div class=footerItemText>
       <div class=example>
-        <button class=button onclick=WikEdDiffTool.clear();>Clear</button>
+        <button class=button onclick="WikEdDiffTool.clear();">Clear</button>
       </div>
       <div class=example>
-        <button class=button onclick=WikEdDiffTool.example();>Example</button>
+        <button class=button onclick="WikEdDiffTool.example();">Example</button>
       </div>
     </div> -->
   </div>
