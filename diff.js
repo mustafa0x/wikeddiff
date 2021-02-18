@@ -138,7 +138,7 @@ var wikEdDiffConfig;
  *
  * @class WikEdDiff
  */
-const WikEdDiff = function() {
+export default function WikEdDiff() {
     /** @var array config Configuration and customization settings. */
     this.config = {
         /** Core diff settings (with default values). */
@@ -452,65 +452,47 @@ const WikEdDiff = function() {
      *   {title}: title attribute (popup)
      *   {nounicode}: noUnicodeSymbols fallback
      */
+    const mouse_event = `onmouseover="wikEdDiffBlockHandler(undefined, this, 'mouseover');">`;
     this.config.htmlCode = {
-        noChangeStart:
-            `<div class="wikEdDiffNoChange" title="${this.config.msg['wiked-diff-same']}">`,
+        noChangeStart: `<div class=wikEdDiffNoChange title="${this.config.msg['wiked-diff-same']}">`,
         noChangeEnd: '</div>',
 
-        containerStart: '<div class="wikEdDiffContainer" id="wikEdDiffContainer">',
+        containerStart: '<div class=wikEdDiffContainer id=wikEdDiffContainer>',
         containerEnd: '</div>',
 
-        fragmentStart: '<pre class="wikEdDiffFragment" style="white-space: pre-wrap;">',
+        fragmentStart: '<pre class=wikEdDiffFragment>',
         fragmentEnd: '</pre>',
-        separator: '<div class="wikEdDiffSeparator"></div>',
+        separator: '<div class=wikEdDiffSeparator></div>',
 
         insertStart:
-            `<span class="wikEdDiffInsert" title="${this.config.msg['wiked-diff-ins']}">`,
+            `<span class=wikEdDiffInsert title="${this.config.msg['wiked-diff-ins']}">`,
         insertStartBlank:
             `<span class="wikEdDiffInsert wikEdDiffInsertBlank" title="${this.config.msg['wiked-diff-ins']}">`,
         insertEnd: '</span>',
 
         deleteStart:
-            `<span class="wikEdDiffDelete" title="${this.config.msg['wiked-diff-del']}">`,
+            `<span class=wikEdDiffDelete title="${this.config.msg['wiked-diff-del']}">`,
         deleteStartBlank:
             `<span class="wikEdDiffDelete wikEdDiffDeleteBlank" title="${this.config.msg['wiked-diff-del']}">`,
         deleteEnd: '</span>',
 
-        blockStart:
-            '<span class="wikEdDiffBlock"' +
-            'title="{title}" id="wikEdDiffBlock{number}"' +
-            'onmouseover="wikEdDiffBlockHandler(undefined, this, \'mouseover\');">',
-        blockColoredStart:
-            '<span class="wikEdDiffBlock wikEdDiffBlock wikEdDiffBlock{number}"' +
-            'title="{title}" id="wikEdDiffBlock{number}"' +
-            'onmouseover="wikEdDiffBlockHandler(undefined, this, \'mouseover\');">',
+        blockStart: `<span class=wikEdDiffBlock title="{title}" id=wikEdDiffBlock{number} ${mouse_event}`,
+        blockColoredStart: `<span class="wikEdDiffBlock wikEdDiffBlock wikEdDiffBlock{number}" title="{title}" id=wikEdDiffBlock{number} ${mouse_event}`,
         blockEnd: '</span>',
 
-        markLeft:
-            '<span class="wikEdDiffMarkLeft{nounicode}"' +
-            'title="{title}" id="wikEdDiffMark{number}"' +
-            'onmouseover="wikEdDiffBlockHandler(undefined, this, \'mouseover\');"></span>',
-        markLeftColored:
-            '<span class="wikEdDiffMarkLeft{nounicode} wikEdDiffMark wikEdDiffMark{number}"' +
-            'title="{title}" id="wikEdDiffMark{number}"' +
-            'onmouseover="wikEdDiffBlockHandler(undefined, this, \'mouseover\');"></span>',
+        markLeft: `<span class=wikEdDiffMarkLeft{nounicode} title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
+        markLeftColored: `<span class="wikEdDiffMarkLeft{nounicode} wikEdDiffMark wikEdDiffMark{number}" title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
 
-        markRight:
-            '<span class="wikEdDiffMarkRight{nounicode}"' +
-            'title="{title}" id="wikEdDiffMark{number}"' +
-            'onmouseover="wikEdDiffBlockHandler(undefined, this, \'mouseover\');"></span>',
-        markRightColored:
-            '<span class="wikEdDiffMarkRight{nounicode} wikEdDiffMark wikEdDiffMark{number}"' +
-            'title="{title}" id="wikEdDiffMark{number}"' +
-            'onmouseover="wikEdDiffBlockHandler(undefined, this, \'mouseover\');"></span>',
+        markRight: `<span class=wikEdDiffMarkRight{nounicode} title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
+        markRightColored: `<span class="wikEdDiffMarkRight{nounicode} wikEdDiffMark wikEdDiffMark{number}" title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
 
-        newline: '<span class="wikEdDiffNewline">\n</span>',
-        tab: '<span class="wikEdDiffTab"><span class="wikEdDiffTabSymbol"></span>\t</span>',
-        space: '<span class="wikEdDiffSpace"><span class="wikEdDiffSpaceSymbol"></span> </span>',
+        newline: '<span class=wikEdDiffNewline>\n</span>',
+        tab: '<span class=wikEdDiffTab><span class=wikEdDiffTabSymbol></span>\t</span>',
+        space: '<span class=wikEdDiffSpace><span class=wikEdDiffSpaceSymbol></span> </span>',
 
-        omittedChars: '<span class="wikEdDiffOmittedChars">…</span>',
+        omittedChars: '<span class=wikEdDiffOmittedChars>…</span>',
 
-        errorStart: '<div class="wikEdDiffError" title="Error: diff not consistent with versions!">',
+        errorStart: '<div class=wikEdDiffError title="Error: diff not consistent with versions!">',
         errorEnd: '</div>'
     };
 
@@ -1056,7 +1038,6 @@ const WikEdDiff = function() {
         }
 
         /** Select gaps of identical token number and strong similarity of all tokens. */
-
         var gapsLength = gaps.length;
         for (var gap = 0; gap < gapsLength; gap++) {
             let charSplit = true;
@@ -1065,9 +1046,9 @@ const WikEdDiff = function() {
             if (gaps[gap].newTokens !== gaps[gap].oldTokens) {
                 // One word became separated by space, dash, or any string
                 if (gaps[gap].newTokens === 1 && gaps[gap].oldTokens === 3) {
-                    var token = this.newText.tokens[ gaps[gap].newFirst ].token;
-                    var tokenFirst = this.oldText.tokens[ gaps[gap].oldFirst ].token;
-                    var tokenLast = this.oldText.tokens[ gaps[gap].oldLast ].token;
+                    var token = this.newText.tokens[gaps[gap].newFirst].token;
+                    var tokenFirst = this.oldText.tokens[gaps[gap].oldFirst].token;
+                    var tokenLast = this.oldText.tokens[gaps[gap].oldLast].token;
                     if (
                         token.indexOf(tokenFirst) !== 0 ||
                         token.indexOf(tokenLast) !== token.length - tokenLast.length
@@ -1076,9 +1057,9 @@ const WikEdDiff = function() {
                     }
                 }
                 else if (gaps[gap].oldTokens === 1 && gaps[gap].newTokens === 3) {
-                    var token = this.oldText.tokens[ gaps[gap].oldFirst ].token;
-                    var tokenFirst = this.newText.tokens[ gaps[gap].newFirst ].token;
-                    var tokenLast = this.newText.tokens[ gaps[gap].newLast ].token;
+                    var token = this.oldText.tokens[gaps[gap].oldFirst].token;
+                    var tokenFirst = this.newText.tokens[gaps[gap].newFirst].token;
+                    var tokenLast = this.newText.tokens[gaps[gap].newLast].token;
                     if (
                         token.indexOf(tokenFirst) !== 0 ||
                         token.indexOf(tokenLast) !== token.length - tokenLast.length
@@ -1263,7 +1244,7 @@ const WikEdDiff = function() {
                     text.tokens[front].token === text.tokens[back].token
                 ) {
                     text.tokens[front].link = text.tokens[back].link;
-                    textLinked.tokens[ text.tokens[front].link ].link = front;
+                    textLinked.tokens[text.tokens[front].link].link = front;
                     text.tokens[back].link = null;
 
                     gapFront = text.tokens[gapFront].next;
@@ -1315,7 +1296,7 @@ const WikEdDiff = function() {
                     text.tokens[front].token === text.tokens[back].token
                 ) {
                     text.tokens[back].link = text.tokens[front].link;
-                    textLinked.tokens[ text.tokens[back].link ].link = back;
+                    textLinked.tokens[text.tokens[back].link].link = back;
                     text.tokens[front].link = null;
 
                     front = text.tokens[front].prev;
@@ -2334,7 +2315,7 @@ const WikEdDiff = function() {
         let j = block.oldStart;
         for (let count = 0; count < block.count; count++) {
             // Unlink tokens
-            this.newText.tokens[ this.oldText.tokens[j].link ].link = null;
+            this.newText.tokens[this.oldText.tokens[j].link].link = null;
             this.oldText.tokens[j].link = null;
             j = this.oldText.tokens[j].next;
         }
@@ -2475,7 +2456,7 @@ const WikEdDiff = function() {
             else if (
                 prevBlock !== null &&
                 prevBlock.type === '=' &&
-                prevBlockNumber !== groups[ prevBlock.group ].blockEnd
+                prevBlockNumber !== groups[prevBlock.group].blockEnd
             ) {
                 refBlock = prevBlock;
             }
@@ -2484,7 +2465,7 @@ const WikEdDiff = function() {
             else if (
                 nextBlock !== null &&
                 nextBlock.type === '=' &&
-                nextBlockNumber !== groups[ nextBlock.group ].blockStart
+                nextBlockNumber !== groups[nextBlock.group].blockStart
             ) {
                 refBlock = nextBlock;
             }
@@ -2728,7 +2709,7 @@ const WikEdDiff = function() {
         // Create lookup table: original to sorted
         const lookupSorted = [];
         for (var i = 0; i < blocksOldLength; i++) {
-            lookupSorted[ blocksOld[i].number ] = i;
+            lookupSorted[blocksOld[i].number] = i;
         }
 
         // Cycle through groups (moved group)
@@ -2745,14 +2726,14 @@ const WikEdDiff = function() {
 
             // Get old text prev block
             let prevBlock = null;
-            var block = lookupSorted[ movedGroup.blockStart ];
+            var block = lookupSorted[movedGroup.blockStart];
             if (block > 0) {
                 prevBlock = blocksOld[block - 1];
             }
 
             // Get old text next block
             let nextBlock = null;
-            var block = lookupSorted[ movedGroup.blockEnd ];
+            var block = lookupSorted[movedGroup.blockEnd];
             if (block < blocksOld.length - 1) {
                 nextBlock = blocksOld[block + 1];
             }
@@ -2770,7 +2751,7 @@ const WikEdDiff = function() {
 
             // Find closest fixed block to the left
             else {
-                for (let fixed = lookupSorted[ movedGroup.blockStart ] - 1; fixed >= 0; fixed --) {
+                for (let fixed = lookupSorted[movedGroup.blockStart] - 1; fixed >= 0; fixed --) {
                     if (blocksOld[fixed].type === '=' && blocksOld[fixed].fixed === true) {
                         refBlock = blocksOld[fixed];
                         break;
@@ -2872,7 +2853,7 @@ const WikEdDiff = function() {
             const color = groupsSort[group].color;
             if (color !== null) {
                 var type;
-                if (groupsSort[group].movedFrom < blocks[ blockStart ].group) {
+                if (groupsSort[group].movedFrom < blocks[blockStart].group) {
                     type = '(<';
                 }
                 else {
@@ -2900,7 +2881,7 @@ const WikEdDiff = function() {
 
                 // Add '<' and '>' marks
                 else if (type === '|') {
-                    const movedGroup = groups[ blocks[block].moved ];
+                    const movedGroup = groups[blocks[block].moved];
 
                     // Get mark text
                     let markText = '';
@@ -3612,10 +3593,7 @@ const WikEdDiff = function() {
             const end = 128;
             const gapMark = ' [...] ';
             if (title.length > max) {
-                title =
-                    title.substr(0, max - gapMark.length - end) +
-                    gapMark +
-                    title.substr(title.length - end);
+                title = title.substr(0, max - gapMark.length - end) + gapMark + title.substr(title.length - end);
             }
             title = this.htmlEscape(title);
             title = title.replace(/\t/g, '&nbsp;&nbsp;');
@@ -3633,11 +3611,7 @@ const WikEdDiff = function() {
      * @return string Escaped html code
      */
     this.htmlEscape = html => {
-        html = html.replace(/&/g, '&amp;');
-        html = html.replace(/</g, '&lt;');
-        html = html.replace(/>/g, '&gt;');
-        html = html.replace(/"/g, '&quot;');
-        return html;
+        return html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     };
 
 

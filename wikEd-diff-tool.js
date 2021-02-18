@@ -11,6 +11,9 @@
 /* jshint -W004, -W100, newcap: true, browser: true, jquery: true, sub: true, bitwise: true, curly: true, evil: true, forin: true, freeze: true, globalstrict: true, immed: true, latedef: true, loopfunc: true, quotmark: single, strict: true, undef: true */
 /* global console */
 
+const $ = (s, cont) => (cont || document).querySelector(s);
+const $$ = (s, cont) => (cont || document).querySelectorAll(s);
+
 // define global objects
 var wikEdDiffConfig;
 var WED;
@@ -79,15 +82,14 @@ const WikEdDiffTool = {
         for (var option = 0; option < WikEdDiffTool.options.length; option ++) {
             wikEdDiffConfig[ WikEdDiffTool.options[option] ] = (document.getElementById(WikEdDiffTool.options[option]).checked === true);
         }
-        wikEdDiffConfig.blockMinLength = parseInt($('#blockMinLength').value);
-        wikEdDiffConfig.unlinkMax = parseInt($('#unlinkMax').value);
-        wikEdDiffConfig.recursionMax = parseInt($('#recursionMax').value);
+        wikEdDiffConfig.blockMinLength = +$('#blockMinLength').value;
+        wikEdDiffConfig.unlinkMax = +$('#unlinkMax').value;
+        wikEdDiffConfig.recursionMax = +$('#recursionMax').value;
 
         // calculate the diff
         var oldString = $('#old').value;
         var newString = $('#new').value;
-        var wikEdDiff1 = new WikEdDiff();
-        var diffHtml = wikEdDiff1.diff(oldString, newString);
+        var diffHtml = (new WikEdDiff()).diff(oldString, newString);
         $('#diff').innerHTML = diffHtml;
     },
 
@@ -112,7 +114,7 @@ const WikEdDiffTool = {
         if (fileNumber >= fileListObj.length)
             return;
 
-        var fileObj = fileListObj[ fileNumber ];
+        var fileObj = fileListObj[fileNumber];
         if (target.value !== '')
             target.value += '\n\n'
 
