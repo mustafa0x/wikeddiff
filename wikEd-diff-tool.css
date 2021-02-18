@@ -242,16 +242,7 @@ body {
   white-space: nowrap;
 }
 
-/* versions */
-.version_no_flex { /* class added by script */
-  clear: both;
-  float: left;
-  width: 95%;
-  height: 10em;
-  box-sizing: border-box;
-}
-
-.version {
+.flex {
   flex: 1 1 auto;
   overflow: auto;
   overflow-x: auto;
@@ -262,15 +253,7 @@ body {
   font-family: sans-serif;
   font-size: 90%;
 }
-
-.version::-moz-placeholder {
-  color: lightgray;
-  font-size: 300%;
-  font-weight: bold;
-  text-align: center;
-}
-
-.version::placeholder {
+.flex::placeholder {
   color: lightgray;
   font-size: 300%;
   font-weight: bold;
