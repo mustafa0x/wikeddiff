@@ -11,16 +11,7 @@
 /* jshint -W004, -W100, newcap: true, browser: true, jquery: true, sub: true, bitwise: true,
     curly: true, evil: true, forin: true, freeze: true, globalstrict: true, immed: true,
     latedef: true, loopfunc: true, quotmark: single, strict: true, undef: true */
-/* global console */
 
-/** Define global objects. */
-var wikEdDiffConfig;
-
-/**
- * wikEd diff main class.
- *
- * @class WikEdDiff
- */
 export default function WikEdDiff(conf) {
     /** @var array config Configuration and customization settings. */
     this.config = {
