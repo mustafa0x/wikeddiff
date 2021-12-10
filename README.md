@@ -27,6 +27,30 @@ between files. Communications of the ACM 21(4):264 (1978)).
 - Text split optimized for MediaWiki source texts
 - Well commented and documented code
 
+## Usage
+
+```js
+import WikEdDiff from 'wikeddiff'
+const differ = new WikEdDiff({
+    fullDiff: false,
+    showBlockMoves: true,
+    charDiff: true,
+    repeatedDiff: true,
+    recursiveDiff: true,
+    recursionMax: 5,
+    unlinkBlocks: true,
+    blockMinLength: 3,
+    unlinkMax: 10,
+    coloredBlocks: false,
+    debug: false,
+    timer: false,
+    unitTesting: false,
+    noUnicodeSymbols: false,
+    stripTrailingNewline: false,
+})
+differ.diff('old', 'new')
+```
+
 ## Datastructures (abbreviations from publication):
 
     class WikEdDiffText:  diff text object (new or old version)

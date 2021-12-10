@@ -236,6 +236,6 @@
 .wikEdDiffError .wikEdDiffNoChange {
     background: #faa;
 }
-pre {
+.wikEdDiffContainer pre {
   white-space: pre-wrap;
 }
