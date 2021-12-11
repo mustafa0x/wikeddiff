@@ -51,6 +51,49 @@ const differ = new WikEdDiff({
 differ.diff('old', 'new')
 ```
 
+## Svelte usage
+
+```html
+<textarea bind:value={a_input}/>
+<textarea bind:value={b_input}/>
+
+# of changes: {changes_count}
+
+<button on:click={() => differ.show_diff(a_input, b_input)}>diff</button>
+<button on:click={() => differ.highlight_change(1)}>next</button>
+<button on:click={() => differ.highlight_change(-1)}>prev</button>
+
+<Differ
+  bind:this={differ}
+  bind:changes_count
+  conf={{
+    fullDiff: false,
+    showBlockMoves: true,
+    charDiff: true,
+    repeatedDiff: true,
+    recursiveDiff: true,
+    recursionMax: 5,
+    unlinkBlocks: true,
+    blockMinLength: 3,
+    unlinkMax: 10,
+    coloredBlocks: false,
+    debug: false,
+    timer: false,
+    unitTesting: false,
+    noUnicodeSymbols: false,
+    stripTrailingNewline: false,
+  }}
+  />
+
+<script>
+import Differ from './wikeddiff/Differ.svelte'
+
+let differ
+let a_input = ''
+let b_input = ''
+</script>
+```
+
 ## Datastructures (abbreviations from publication):
 
     class WikEdDiffText:  diff text object (new or old version)
