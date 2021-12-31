@@ -54,7 +54,12 @@ const config = {
 const differ = (a, b) => (new WikEdDiff(config)).diff(a, b)
 
 let diff
-if (process.argv[2].endsWith('.diff')) {
+const stdin = fs.readFileSync(0).toString()
+if (stdin) {
+    const text = separate_diff(stdin)
+    diff = differ(text.old, text.new)
+}
+else if (process.argv[2].endsWith('.diff')) {
     const text = separate_diff(r(process.argv[2]))
     diff = differ(text.old, text.new)
 }
