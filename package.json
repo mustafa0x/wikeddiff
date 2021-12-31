@@ -1,6 +1,6 @@
 {
   "name": "wikeddiff",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "module": "diff.js",
   "repository": "github:mustafa0x/wikeddiff",
   "type": "module"
