@@ -6,12 +6,6 @@
   border-radius: 0.25em;
   padding: 0.2em 1px;
 }
-.wikEdDiffInsertBlank {
-  background-color: #66bbff;
-}
-.wikEdDiffFragment:hover .wikEdDiffInsertBlank {
-  background-color: var(--add-color);
-}
 /* Delete */
 .wikEdDiffDelete {
   font-weight: bold;
@@ -19,12 +13,6 @@
   color: #222;
   border-radius: 0.25em;
   padding: 0.2em 1px;
-}
-.wikEdDiffDeleteBlank {
-  background-color: #ffd064;
-}
-.wikEdDiffFragment:hover .wikEdDiffDeleteBlank {
-  background-color: var(--remove-color);
 }
 /* Block */
 .wikEdDiffBlock {
