@@ -25,6 +25,10 @@ const default_conf = {
     dir: 'auto',
 }
 export let conf = {}
+export let to_diff
+
+$: if (to_diff)
+    show_diff(...to_diff)
 
 conf = {...default_conf, ...conf}
 const init_diff = () => new WikEdDiff(conf)
