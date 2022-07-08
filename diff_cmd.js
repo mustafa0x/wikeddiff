@@ -17,12 +17,23 @@ function get_file_number() {
 }
 function separate_diff(diff) {
     const text = {old: '', new: ''}
-    diff.split('\n').forEach(line => {
-        line = line += '\n'
+    let first_pos = true
+    for (let line of diff.split('\n')) {
+        if (/^(diff|index|--- a\/|\+\+\+ b\/)/.test(line))
+            continue
+        if (line.startsWith('@@')) {
+            if (!first_pos) {
+                text.old += '\n...\n'
+                text.new += '\n...\n'
+            }
+            first_pos = false
+            continue
+        }
+        line += '\n'
         const first = line[0]
-        if (/-|\+| /.test(first))
+        if (/-|\+| /.test(line[0]))
             line = line.slice(1)
-        if (/^(diff|index|--|\+\+|@@)/.test(line) || first === ' ') {
+        if (first === ' ') {
             text.old += line
             text.new += line
         }
@@ -30,7 +41,7 @@ function separate_diff(diff) {
             text.old += line
         else if (first === '+')
             text.new += line
-    })
+    }
     return text
 }
 
