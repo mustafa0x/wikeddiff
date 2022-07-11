@@ -23,6 +23,15 @@ const default_conf = {
     noUnicodeSymbols: false,
     stripTrailingNewline: false,
     dir: 'auto',
+    msg: {
+        'wiked-diff-empty': '(لا فرق)',
+        'wiked-diff-same':  '=',
+        'wiked-diff-ins':   '+',
+        'wiked-diff-del':   '-',
+        'wiked-diff-block-left':  '◀',
+        'wiked-diff-block-right': '▶',
+        'wiked-diff-error': 'Error: diff not consistent with versions!',
+    },
 }
 export let conf = {}
 export let to_diff

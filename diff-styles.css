@@ -124,14 +124,10 @@
   margin: 0;
 }
 .wikEdDiffNoChange {
-  background: #f0f0f0;
-  border: 1px #bbb solid;
-  border-radius: 0.5em;
-  line-height: 1.6;
-  box-shadow: 2px 2px 2px #ddd;
-  padding: 0.5em;
-  margin: 1em 0;
+  padding: 1rem;
   text-align: center;
+  font-weight: bold;
+  color: #aaa;
 }
 .wikEdDiffSeparator {
   margin-bottom: 1em;
