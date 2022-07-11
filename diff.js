@@ -79,12 +79,6 @@ export default function WikEdDiff(conf) {
         coloredBlocks: false,
 
         /**
-         * @var bool config.coloredBlocks
-         *   Do not use UniCode block move marks (legacy browsers) (false)
-         */
-        noUnicodeSymbols: false,
-
-        /**
          * @var bool config.stripTrailingNewline
          *   Strip trailing newline off of texts (true in .js, false in .php)
          */
@@ -314,8 +308,6 @@ export default function WikEdDiff(conf) {
         'wiked-diff-del':   '-',
         'wiked-diff-block-left':  '◀',
         'wiked-diff-block-right': '▶',
-        'wiked-diff-block-left-nounicode':  '<',
-        'wiked-diff-block-right-nounicode': '>',
         'wiked-diff-error': 'Error: diff not consistent with versions!'
     };
 
@@ -324,7 +316,6 @@ export default function WikEdDiff(conf) {
      * Dynamic replacements:
      *   {number}: class/color/block/mark/id number
      *   {title}: title attribute (popup)
-     *   {nounicode}: noUnicodeSymbols fallback
      */
     const mouse_event = `onmouseover="wikEdDiffBlockHandler(undefined, this, 'mouseover');">`;
     this.config.htmlCode = {
@@ -354,11 +345,11 @@ export default function WikEdDiff(conf) {
         blockColoredStart: `<span class="wikEdDiffBlock wikEdDiffBlock wikEdDiffBlock{number}" title="{title}" id=wikEdDiffBlock{number} ${mouse_event}`,
         blockEnd: '</span>',
 
-        markLeft: `<span class=wikEdDiffMarkLeft{nounicode} title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
-        markLeftColored: `<span class="wikEdDiffMarkLeft{nounicode} wikEdDiffMark wikEdDiffMark{number}" title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
+        markLeft: `<span class=wikEdDiffMarkLeft title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
+        markLeftColored: `<span class="wikEdDiffMarkLeft wikEdDiffMark wikEdDiffMark{number}" title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
 
-        markRight: `<span class=wikEdDiffMarkRight{nounicode} title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
-        markRightColored: `<span class="wikEdDiffMarkRight{nounicode} wikEdDiffMark wikEdDiffMark{number}" title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
+        markRight: `<span class=wikEdDiffMarkRight title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
+        markRightColored: `<span class="wikEdDiffMarkRight wikEdDiffMark wikEdDiffMark{number}" title="{title}" id=wikEdDiffMark{number} ${mouse_event}</span>`,
 
         newline: '<span class=wikEdDiffNewline>\n</span>',
         tab: '<span class=wikEdDiffTab><span class=wikEdDiffTabSymbol></span>\t</span>',
@@ -3275,13 +3266,7 @@ export default function WikEdDiff(conf) {
             else if (type === '(<') {
                 if (version !== 'old') {
                     // Get title
-                    var title;
-                    if (this.config.noUnicodeSymbols === true) {
-                        title = this.config.msg['wiked-diff-block-left-nounicode'];
-                    }
-                    else {
-                        title = this.config.msg['wiked-diff-block-left'];
-                    }
+                    var title = this.config.msg['wiked-diff-block-left'];
 
                     // Get html
                     if (this.config.coloredBlocks === true) {
@@ -3298,13 +3283,7 @@ export default function WikEdDiff(conf) {
             else if (type === '(>') {
                 if (version !== 'old') {
                     // Get title
-                    var title;
-                    if (this.config.noUnicodeSymbols === true) {
-                        title = this.config.msg['wiked-diff-block-right-nounicode'];
-                    }
-                    else {
-                        title = this.config.msg['wiked-diff-block-right'];
-                    }
+                    var title = this.config.msg['wiked-diff-block-right'];
 
                     // Get html
                     if (this.config.coloredBlocks === true) {
@@ -3439,7 +3418,6 @@ export default function WikEdDiff(conf) {
      * Replaces:
      *   {number}:    class/color/block/mark/id number
      *   {title}:     title attribute (popup)
-     *   {nounicode}: noUnicodeSymbols fallback
      *   input: html, number: block number, title: title attribute (popup) text
      *
      * @param string html Html code to be customized
@@ -3448,14 +3426,6 @@ export default function WikEdDiff(conf) {
     this.htmlCustomize = function(html, number, title) {
         // Replace {number} with class/color/block/mark/id number
         html = html.replace(/\{number\}/g, number);
-
-        // Replace {nounicode} with wikEdDiffNoUnicode class name
-        if (this.config.noUnicodeSymbols === true) {
-            html = html.replace(/\{nounicode\}/g, ' wikEdDiffNoUnicode');
-        }
-        else {
-            html = html.replace(/\{nounicode\}/g, '');
-        }
 
         // Shorten title text, replace {title}
         if (title !== undefined) {
